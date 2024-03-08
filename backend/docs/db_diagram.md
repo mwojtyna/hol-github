@@ -8,24 +8,31 @@
 ```mermaid
 erDiagram
     user {
-        TEXT id PK
-        TEXT username UK
-        TEXT password
-        INTEGER high_score
+        uuid id PK
+        text username UK
+        text password
+        integer high_score
+    }
+
+    session {
+        uuid id PK
+        uuid user_id FK
+        timestamp expire_date
     }
 
     repo {
-        TEXT id PK
-        TEXT name UK
-        INTEGER star_amount
-        BLOB image
+        uuid id PK
+        text name UK
+        integer star_amount
+        bytea image
     }
 
     game {
-        TEXT id PK
-        TEXT user_id FK
-        INTEGER score
+        uuid id PK
+        uuid user_id FK
+        integer score
     }
 
     user 1--0+ game: "games"
+    user 1--0+ session: "session"
 ```

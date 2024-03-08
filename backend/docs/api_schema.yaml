@@ -73,7 +73,7 @@ paths:
                           name:
                             type: string
 
-  /api/user/signp:
+  /api/user/signup:
     post:
       summary: Sign up a new user
       requestBody:
@@ -103,9 +103,9 @@ paths:
         400:
           description: Invalid password
 
-  /api/user/login:
+  /api/user/signin:
     post:
-      summary: Login
+      summary: Sign in
       requestBody:
         required: true
         content:
@@ -130,9 +130,9 @@ paths:
         401:
           description: Invalid username or password
 
-  /api/user/logout:
+  /api/user/signout:
     post:
-      summary: Logout
+      summary: Sign out
       responses:
         200:
           description: OK

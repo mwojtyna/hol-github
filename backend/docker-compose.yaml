@@ -1,0 +1,17 @@
+name: hol-github
+
+services:
+  db:
+    container_name: db
+    image: postgres:16.2-alpine
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    entrypoint: docker-entrypoint.sh -c 'shared_buffers=256MB' -c 'max_connections=200'
+
+volumes:
+  pgdata:
