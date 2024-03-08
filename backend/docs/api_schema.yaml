@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /api/game/new:
+    post:
+      summary: Start a new game
+      responses:
+        200:
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  left_image:
+                    type: string
+                    format: binary
+                  right_image:
+                    type: string
+                    format: binary
+                  repos:
+                    type: object
+                    properties:
+                      left:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                      right:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+
+  /api/game/choose:
+    post:
+      summary: Submit choice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                choice:
+                  type: string
+                  enum: [ left, right ]
+      responses:
+        422:
+          description: Player tried to submit a choice without starting a game
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    enum: [ correct, wrong ]
+                  next:
+                    required: false
+                    type: object
+                    properties:
+                      next_image:
+                        type: string
+                        format: binary
+                      next_repo:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+
+  /api/user/signp:
+    post:
+      summary: Sign up a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        409:
+          description: Username already exists
+        400:
+          description: Invalid password
+
+  /api/user/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        401:
+          description: Invalid username or password
+
+  /api/user/logout:
+    post:
+      summary: Logout
+      responses:
+        200:
+          description: OK
+        401:
+          description: User not logged in
