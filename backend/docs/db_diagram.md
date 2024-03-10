@@ -11,7 +11,6 @@ erDiagram
         uuid id PK
         text username UK
         text password
-        integer high_score
     }
 
     session {

@@ -15,7 +15,4 @@ class UserModel(
 
     @Column(name = "password", nullable = false)
     val password: String,
-
-    @Column(name = "high_score", nullable = false)
-    val highScore: Int = 0,
 )
