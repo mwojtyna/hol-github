@@ -6,7 +6,7 @@ import java.util.*
 
 @Entity
 @Table(name = "session")
-class SessionModel(
+data class SessionModel(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID,
