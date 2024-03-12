@@ -11,9 +11,9 @@ data class UserModel(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false, columnDefinition = "text")
     val username: String,
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, columnDefinition = "text")
     val password: String,
 )
