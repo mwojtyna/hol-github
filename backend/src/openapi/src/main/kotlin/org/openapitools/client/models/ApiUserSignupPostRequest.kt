@@ -30,10 +30,10 @@ import com.squareup.moshi.JsonClass
 data class ApiUserSignupPostRequest (
 
     @Json(name = "username")
-    val username: kotlin.String? = null,
+    val username: kotlin.String,
 
     @Json(name = "password")
-    val password: kotlin.String? = null
+    val password: kotlin.String
 
 )
 

@@ -26,19 +26,33 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation(project("src:openapi"))
+    implementation("org.bouncycastle:bcprov-jdk18on:1.77") // Required for argon2
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1") // Required for openapi
     runtimeOnly("org.postgresql:postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 }
 
+sourceSets {
+    main {
+        kotlin {
+            srcDir("$rootDir/src/openapi")
+        }
+    }
+}
+
 openApiGenerate {
     generatorName.set("kotlin")
     inputSpec.set("$rootDir/docs/api_schema.yaml")
     outputDir.set("$rootDir/src/openapi")
-    generateApiTests.set(false)
-    generateModelTests.set(false)
+    globalProperties.set(
+        mapOf(
+            "models" to "",
+            "apis" to "false",
+            "modelDocs" to "false",
+        )
+    )
 }
 
 tasks.withType<KotlinCompile> {

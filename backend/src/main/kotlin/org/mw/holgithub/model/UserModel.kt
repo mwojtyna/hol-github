@@ -8,7 +8,8 @@ import java.util.*
 data class UserModel(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID,
+    @Column(name = "id", updatable = false, nullable = false, unique = true)
+    val id: UUID? = null,
 
     @Column(name = "username", unique = true, nullable = false)
     val username: String,

@@ -12,6 +12,9 @@ class UserDetailsServiceImpl(private val repo: UserRepository) : UserDetailsServ
         val user = repo.findByUsername(username)
             ?: throw Exception("User with username '${username}' not found")
 
-        return User(user.username, user.password, emptyList())
+        return User.withUsername(user.username)
+            .password(user.password)
+            .authorities("USER")
+            .build()
     }
 }

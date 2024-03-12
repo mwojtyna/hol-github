@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/user")
 class UserController(private val service: UserService) {
     @PostMapping("/signup")
-    fun signUp(@RequestBody body: ApiUserSignupPostRequest): ApiUserSignupPostRequest {
-        return body
+    fun signUp(@RequestBody body: ApiUserSignupPostRequest) {
+        service.createUser(body.username, body.password)
     }
 
     @PostMapping("/signin")
@@ -21,7 +21,8 @@ class UserController(private val service: UserService) {
     }
 
     @PostMapping("/signout")
-    fun signOut(): Unit {
+    fun signOut() {
+
     }
 }
 
