@@ -1,6 +1,6 @@
 package org.mw.holgithub.service
 
-import org.mw.holgithub.exceptions.UserExistsException
+import org.mw.holgithub.exception.UserExistsException
 import org.mw.holgithub.model.UserModel
 import org.mw.holgithub.repository.UserRepository
 import org.springframework.dao.DataIntegrityViolationException
@@ -8,16 +8,21 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(private val repo: UserRepository, private val passwordEncoder: PasswordEncoder) {
+class UserService(
+    private val repository: UserRepository,
+    private val passwordEncoder: PasswordEncoder,
+) {
     /** @throws UserExistsException */
-    fun createUser(username: String, password: String) {
-        val encodedPassword = passwordEncoder.encode(password)!!
-        val user = UserModel(username = username, password = encodedPassword)
-
+    fun signUp(username: String, password: String) {
         try {
-            repo.save(user)
+            repository.save(
+                UserModel(
+                    username = username,
+                    password = passwordEncoder.encode(password)
+                )
+            )
         } catch (e: DataIntegrityViolationException) {
-            throw UserExistsException(user.username)
+            throw UserExistsException("User with username '$username' already exists")
         }
     }
 }

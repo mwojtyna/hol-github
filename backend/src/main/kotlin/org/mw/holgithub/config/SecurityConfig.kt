@@ -3,17 +3,15 @@ package org.mw.holgithub.config
 import org.mw.holgithub.service.UserDetailsServiceImpl
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpStatus
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.HttpStatusEntryPoint
 
 @Configuration
 @EnableWebSecurity
@@ -24,14 +22,18 @@ class SecurityConfig(private val userDetailsService: UserDetailsServiceImpl) {
             csrf {
                 disable()
             }
+            cors {
+                disable()
+            }
+            httpBasic {}
+            sessionManagement {
+                sessionCreationPolicy = SessionCreationPolicy.STATELESS
+            }
             authorizeHttpRequests {
                 authorize("/user/signup", permitAll)
                 authorize("/user/signin", permitAll)
                 authorize("/error", permitAll)
                 authorize(anyRequest, authenticated)
-            }
-            exceptionHandling {
-                authenticationEntryPoint = HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
             }
         }
 
@@ -44,10 +46,10 @@ class SecurityConfig(private val userDetailsService: UserDetailsServiceImpl) {
     }
 
     @Bean
-    fun authenticationManager(): AuthenticationManager {
-        val authenticationProvider = DaoAuthenticationProvider()
-        authenticationProvider.setUserDetailsService(userDetailsService)
-        authenticationProvider.setPasswordEncoder(passwordEncoder())
-        return ProviderManager(authenticationProvider)
+    fun authenticationManager(): ProviderManager {
+        val daoProvider = DaoAuthenticationProvider()
+        daoProvider.setUserDetailsService(userDetailsService)
+        daoProvider.setPasswordEncoder(passwordEncoder())
+        return ProviderManager(daoProvider)
     }
 }

@@ -1,0 +1,167 @@
+_type: export
+__export_format: 4
+__export_date: 2024-03-14T17:37:53.068Z
+__export_source: insomnia.desktop.app:v0.2.3-a
+resources:
+  - _id: req_efd89d84feec43df930937ff5ce0f17c
+    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+    modified: 1710437813567
+    created: 1710291066028
+    url: http://localhost:3000/api/user/test
+    name: test
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnium/0.2.3-a
+    authentication:
+      type: basic
+      useISO88591: false
+      disabled: false
+      username: mati
+      password: Zaq1@wsx
+    metaSortKey: -1710291066028
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    segmentParams: []
+    _type: request
+  - _id: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+    parentId: null
+    modified: 1710426013565
+    created: 1710287072355
+    name: hol-github
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_3a84289b2d9c43ab831dccfd052a09b8
+    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+    modified: 1710437807613
+    created: 1710287069355
+    url: http://localhost:3000/api/user/signup
+    name: signup
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+            "username": "mati",
+            "password": "Zaq1@wsx"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnium/0.2.3-a
+    authentication:
+      type: basic
+      useISO88591: false
+      disabled: true
+      username: mati
+      password: Zaq1@wsx
+    metaSortKey: -1710287069354
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    segmentParams: []
+    _type: request
+  - _id: req_88988a0682a34245bc282926cd7e3583
+    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+    modified: 1710436179217
+    created: 1710289066946
+    url: http://localhost:3000/api/user/signin
+    name: signin
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+            "username": "mati",
+            "password": "Zaq1@wsx"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnium/0.2.3-a
+    authentication: {}
+    metaSortKey: -1710287069304
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    segmentParams: []
+    _type: request
+  - _id: req_ea600b888d28492b8fc21de52278ec81
+    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+    modified: 1710426320061
+    created: 1710287220315
+    url: http://localhost:3000/api/user/signout
+    name: signout
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnium/0.2.3-a
+    authentication:
+      type: basic
+      useISO88591: false
+      disabled: false
+      username: mati
+      password: Zaq1@wsx
+    metaSortKey: -1710287069254
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    segmentParams: []
+    _type: request
+  - _id: env_9d4f8b979d8c40cdbb9c1f41ef6ebf62
+    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+    modified: 1710287071355
+    created: 1710287071355
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1710287071355
+    _type: environment
+  - _id: jar_98a134fe363f4babb9847cc359435951
+    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+    modified: 1710437811830
+    created: 1710287072355
+    name: Default Jar
+    cookies:
+      - key: JSESSIONID
+        value: C51FD474D07CD218C0824AD3CBC4590E
+        domain: localhost
+        path: /api
+        httpOnly: true
+        hostOnly: true
+        creation: 2024-03-14T17:24:49.811Z
+        lastAccessed: 2024-03-14T17:36:51.829Z
+        id: "39665639019136867"
+    _type: cookie_jar
