@@ -1,10 +1,14 @@
 package org.mw.holgithub.controller
 
+import com.sun.net.httpserver.Authenticator.Success
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
+import org.mw.holgithub.dto.ApiUserSigninPostRequest
+import org.mw.holgithub.dto.ApiUserSignupPostRequest
 import org.mw.holgithub.service.UserService
-import org.openapitools.client.models.ApiUserSigninPostRequest
-import org.openapitools.client.models.ApiUserSignupPostRequest
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,13 +18,14 @@ class UserController(
 ) {
 
     @PostMapping("/signup")
-    fun signUp(@RequestBody body: ApiUserSignupPostRequest) {
+    fun signUp(@Valid @RequestBody body: ApiUserSignupPostRequest): ResponseEntity<Success> {
         service.signUp(body.username, body.password)
+        return ResponseEntity(HttpStatus.CREATED)
     }
 
     @PostMapping("/signin")
     fun signIn(
-        @RequestBody body: ApiUserSigninPostRequest,
+        @Valid @RequestBody body: ApiUserSigninPostRequest,
         request: HttpServletRequest,
         response: HttpServletResponse,
     ) {

@@ -1,11 +1,11 @@
 _type: export
 __export_format: 4
-__export_date: 2024-03-14T18:55:58.043Z
+__export_date: 2024-03-14T20:29:08.424Z
 __export_source: insomnia.desktop.app:v0.2.3-a
 resources:
-  - _id: req_efd89d84feec43df930937ff5ce0f17c
-    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710437813567
+  - _id: req_b182c4ce84404526934f3029496411b2
+    parentId: wrk_3227fb90a4404856ab686304ace3eb21
+    modified: 1710448072239
     created: 1710291066028
     url: http://localhost:3000/api/user/test
     name: test
@@ -16,12 +16,7 @@ resources:
     headers:
       - name: User-Agent
         value: insomnium/0.2.3-a
-    authentication:
-      type: basic
-      useISO88591: false
-      disabled: false
-      username: mati
-      password: Zaq1@wsx
+    authentication: {}
     metaSortKey: -1710291066028
     isPrivate: false
     settingStoreCookies: true
@@ -32,17 +27,17 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: wrk_0ff14853f5214b69ba29b0fcc8420c0f
+  - _id: wrk_3227fb90a4404856ab686304ace3eb21
     parentId: null
-    modified: 1710426013565
-    created: 1710287072355
+    modified: 1710447751662
+    created: 1710292466489
     name: hol-github
     description: ""
     scope: collection
     _type: workspace
-  - _id: req_3a84289b2d9c43ab831dccfd052a09b8
-    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710437807613
+  - _id: req_1e3b442130dd480cb773944e49dc461e
+    parentId: wrk_3227fb90a4404856ab686304ace3eb21
+    modified: 1710448054389
     created: 1710287069355
     url: http://localhost:3000/api/user/signup
     name: signup
@@ -61,12 +56,7 @@ resources:
         value: application/json
       - name: User-Agent
         value: insomnium/0.2.3-a
-    authentication:
-      type: basic
-      useISO88591: false
-      disabled: true
-      username: mati
-      password: Zaq1@wsx
+    authentication: {}
     metaSortKey: -1710287069354
     isPrivate: false
     settingStoreCookies: true
@@ -77,9 +67,9 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: req_88988a0682a34245bc282926cd7e3583
-    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710438506289
+  - _id: req_d3979dec11834eaab0e30474a53982b4
+    parentId: wrk_3227fb90a4404856ab686304ace3eb21
+    modified: 1710448062075
     created: 1710289066946
     url: http://localhost:3000/api/user/signin
     name: signin
@@ -109,9 +99,9 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: req_ea600b888d28492b8fc21de52278ec81
-    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710426320061
+  - _id: req_5a74eb6b6e60413f9e299156f978eb91
+    parentId: wrk_3227fb90a4404856ab686304ace3eb21
+    modified: 1710448079588
     created: 1710287220315
     url: http://localhost:3000/api/user/signout
     name: signout
@@ -122,12 +112,7 @@ resources:
     headers:
       - name: User-Agent
         value: insomnium/0.2.3-a
-    authentication:
-      type: basic
-      useISO88591: false
-      disabled: false
-      username: mati
-      password: Zaq1@wsx
+    authentication: {}
     metaSortKey: -1710287069254
     isPrivate: false
     settingStoreCookies: true
@@ -138,40 +123,40 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: env_9d4f8b979d8c40cdbb9c1f41ef6ebf62
-    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710287071355
-    created: 1710287071355
+  - _id: env_cf7193ef983e4070ab4776efd96dbaba
+    parentId: wrk_3227fb90a4404856ab686304ace3eb21
+    modified: 1710292465489
+    created: 1710292465489
     name: Base Environment
     data: {}
     dataPropertyOrder: null
     color: null
     isPrivate: false
-    metaSortKey: 1710287071355
+    metaSortKey: 1710292465489
     _type: environment
-  - _id: jar_98a134fe363f4babb9847cc359435951
-    parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710442440673
-    created: 1710287072355
+  - _id: jar_1d425e36d06e476db2b5c6c66ba47cb0
+    parentId: wrk_3227fb90a4404856ab686304ace3eb21
+    modified: 1710448110502
+    created: 1710292466489
     name: Default Jar
     cookies:
       - key: JSESSIONID
-        value: 64F9CB7AF8741092AF7A55F97190CA45
+        value: 89D681E72B26DE53D6E3335550C3E824
         domain: localhost
         path: /api
         httpOnly: true
         hostOnly: true
-        creation: 2024-03-14T18:49:34.988Z
-        lastAccessed: 2024-03-14T18:49:56.538Z
-        id: "7132388154334872"
+        creation: 2024-03-13T01:19:12.468Z
+        lastAccessed: 2024-03-14T20:28:24.822Z
+        id: "7131474122132999"
       - key: SESSION_ID
-        value: 64F9CB7AF8741092AF7A55F97190CA45
+        expires: 1970-01-01T00:00:10.000Z
+        maxAge: 0
         domain: localhost
         path: /api
         httpOnly: true
         hostOnly: true
-        creation: 2024-03-14T18:49:34.988Z
-        lastAccessed: 2024-03-14T18:54:00.673Z
-        id: "3938838533463853"
-        expires: 2024-03-01T18:54:00.000Z
+        creation: 2024-03-14T20:06:24.430Z
+        lastAccessed: 2024-03-14T20:28:30.502Z
+        id: "6841688662105667"
     _type: cookie_jar
