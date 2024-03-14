@@ -1,6 +1,6 @@
 _type: export
 __export_format: 4
-__export_date: 2024-03-14T17:37:53.068Z
+__export_date: 2024-03-14T18:55:58.043Z
 __export_source: insomnia.desktop.app:v0.2.3-a
 resources:
   - _id: req_efd89d84feec43df930937ff5ce0f17c
@@ -79,7 +79,7 @@ resources:
     _type: request
   - _id: req_88988a0682a34245bc282926cd7e3583
     parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710436179217
+    modified: 1710438506289
     created: 1710289066946
     url: http://localhost:3000/api/user/signin
     name: signin
@@ -151,17 +151,27 @@ resources:
     _type: environment
   - _id: jar_98a134fe363f4babb9847cc359435951
     parentId: wrk_0ff14853f5214b69ba29b0fcc8420c0f
-    modified: 1710437811830
+    modified: 1710442440673
     created: 1710287072355
     name: Default Jar
     cookies:
       - key: JSESSIONID
-        value: C51FD474D07CD218C0824AD3CBC4590E
+        value: 64F9CB7AF8741092AF7A55F97190CA45
         domain: localhost
         path: /api
         httpOnly: true
         hostOnly: true
-        creation: 2024-03-14T17:24:49.811Z
-        lastAccessed: 2024-03-14T17:36:51.829Z
-        id: "39665639019136867"
+        creation: 2024-03-14T18:49:34.988Z
+        lastAccessed: 2024-03-14T18:49:56.538Z
+        id: "7132388154334872"
+      - key: SESSION_ID
+        value: 64F9CB7AF8741092AF7A55F97190CA45
+        domain: localhost
+        path: /api
+        httpOnly: true
+        hostOnly: true
+        creation: 2024-03-14T18:49:34.988Z
+        lastAccessed: 2024-03-14T18:54:00.673Z
+        id: "3938838533463853"
+        expires: 2024-03-01T18:54:00.000Z
     _type: cookie_jar

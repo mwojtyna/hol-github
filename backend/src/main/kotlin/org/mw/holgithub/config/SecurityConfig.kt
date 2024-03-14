@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
 @EnableWebSecurity
@@ -25,15 +26,11 @@ class SecurityConfig(private val userDetailsService: UserDetailsServiceImpl) {
             cors {
                 disable()
             }
-            httpBasic {}
+
+            addFilterBefore<UsernamePasswordAuthenticationFilter>(SessionFilter())
+
             sessionManagement {
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
-            }
-            authorizeHttpRequests {
-                authorize("/user/signup", permitAll)
-                authorize("/user/signin", permitAll)
-                authorize("/error", permitAll)
-                authorize(anyRequest, authenticated)
             }
         }
 
@@ -46,10 +43,10 @@ class SecurityConfig(private val userDetailsService: UserDetailsServiceImpl) {
     }
 
     @Bean
-    fun authenticationManager(): ProviderManager {
+    fun authenticationManager(passwordEncoder: PasswordEncoder): ProviderManager {
         val daoProvider = DaoAuthenticationProvider()
         daoProvider.setUserDetailsService(userDetailsService)
-        daoProvider.setPasswordEncoder(passwordEncoder())
+        daoProvider.setPasswordEncoder(passwordEncoder)
         return ProviderManager(daoProvider)
     }
 }
