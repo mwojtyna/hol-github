@@ -12,13 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ControllerAdvice
 class ExceptionHandlers {
-    @ExceptionHandler(UserExistsException::class)
-    fun userExistsExceptionHandler(exception: UserExistsException): ResponseEntity<Unit> {
-        return ResponseEntity(HttpStatus.CONFLICT)
-    }
-
     @ExceptionHandler(BadCredentialsException::class)
-    fun badCredentialsExceptionHandler(exception: BadCredentialsException): ResponseEntity<Unit> {
+    fun badCredentialsExceptionHandler(exception: BadCredentialsException): ResponseEntity<Error> {
         return ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
@@ -33,5 +28,16 @@ class ExceptionHandlers {
             errors[fieldName] = errorMessage
         }
         return HashMap(errors)
+    }
+
+
+    @ExceptionHandler(UserNotFoundException::class)
+    fun userNotFoundExceptionHandler(exception: UserNotFoundException): ResponseEntity<Error> {
+        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException::class)
+    fun userAlreadyExistsExceptionHandler(exception: UserAlreadyExistsException): ResponseEntity<Error> {
+        return ResponseEntity(HttpStatus.CONFLICT)
     }
 }

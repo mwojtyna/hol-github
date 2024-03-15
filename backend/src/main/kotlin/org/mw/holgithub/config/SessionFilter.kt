@@ -3,12 +3,16 @@ package org.mw.holgithub.config
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.mw.holgithub.service.UserService
+import org.mw.holgithub.dto.AuthDto
+import org.mw.holgithub.service.SessionService
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import java.util.*
 
 @Component
-class SessionFilter : OncePerRequestFilter() {
+class SessionFilter(private val service: SessionService) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -19,19 +23,28 @@ class SessionFilter : OncePerRequestFilter() {
             return
         }
 
-        val sessionCookie = request.cookies?.find { it.name == UserService.COOKIE_NAME }
+        val sessionCookie = service.getSessionCookie(request)
         if (sessionCookie == null) {
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             return
         }
 
-        val sessionId = sessionCookie.value
-        // TODO: Get session from db
-        val session = request.getSession(false)
-        if (session == null || sessionId != session.id) {
+        val sessionIdFromCookie = try {
+            UUID.fromString(sessionCookie.value)
+        } catch (_: IllegalArgumentException) {
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             return
         }
+
+        val session = service.getSession(sessionIdFromCookie)
+        if (session == null || sessionIdFromCookie != session.id) {
+            service.deleteSession(sessionIdFromCookie)
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            return
+        }
+
+        SecurityContextHolder.getContext().authentication =
+            PreAuthenticatedAuthenticationToken(AuthDto(session.user.username, session.id), null)
 
         filterChain.doFilter(request, response)
     }

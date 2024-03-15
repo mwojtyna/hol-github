@@ -16,5 +16,5 @@ data class SessionModel(
     val user: UserModel,
 
     @Column(name = "expire_date", nullable = false)
-    val expireDate: Timestamp
+    val expireDate: Timestamp,
 )

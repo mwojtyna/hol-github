@@ -1,33 +1,23 @@
 package org.mw.holgithub.service
 
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.mw.holgithub.exception.UserExistsException
+import org.mw.holgithub.dto.AuthDto
+import org.mw.holgithub.exception.UserAlreadyExistsException
 import org.mw.holgithub.model.UserModel
 import org.mw.holgithub.repository.UserRepository
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.stereotype.Service
 
 @Service
 class UserService(
     private val repository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val authenticationManager: AuthenticationManager,
+    private val sessionService: SessionService,
 ) {
-    companion object {
-        const val COOKIE_NAME = "SESSION_ID"
-    }
-
-    private val securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy()
-    private val logoutHandler = SecurityContextLogoutHandler()
-
-    /** @throws UserExistsException */
     fun signUp(username: String, password: String) {
         try {
             repository.save(
@@ -35,8 +25,8 @@ class UserService(
                     username = username, password = passwordEncoder.encode(password)
                 )
             )
-        } catch (e: DataIntegrityViolationException) {
-            throw UserExistsException("User with username '$username' already exists")
+        } catch (_: DataIntegrityViolationException) {
+            throw UserAlreadyExistsException(username)
         }
     }
 
@@ -46,39 +36,28 @@ class UserService(
         request: HttpServletRequest,
         response: HttpServletResponse,
     ) {
-        val token = UsernamePasswordAuthenticationToken.unauthenticated(username, password)
-        val authentication = authenticationManager.authenticate(token)
-
-        val context = securityContextHolderStrategy.createEmptyContext()
-        context.authentication = authentication
-        securityContextHolderStrategy.context = context
-
-        // TODO: Save session to db
         // Create a new session
-        val session = request.getSession(true)
-        session.setAttribute("username", username)
+        val session = sessionService.createSession(username)
 
         // Create a new cookie with the session id
-        val cookie = createSessionCookie(session.id)
+        val cookie = sessionService.createSessionCookie(session.id.toString())
         response.addCookie(cookie)
     }
 
-    fun signOut(request: HttpServletRequest, response: HttpServletResponse) {
-        logoutHandler.logout(
-            request, response, securityContextHolderStrategy.context.authentication
-        )
+    fun signOut(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        @AuthenticationPrincipal auth: AuthDto,
+    ) {
+        SecurityContextHolder.clearContext()
+
+        // Remove the session from the database
+        // Session cookie always exists in this context, because the endpoint is protected
+        sessionService.deleteSession(auth.sessionId)
 
         // Remove the session cookie
-        val cookie = createSessionCookie(null)
+        val cookie = sessionService.createSessionCookie(null)
         cookie.maxAge = 0
         response.addCookie(cookie)
-    }
-
-    private fun createSessionCookie(content: String?): Cookie {
-        val cookie = Cookie(COOKIE_NAME, content)
-        cookie.isHttpOnly = true
-        cookie.path = "/api"
-
-        return cookie
     }
 }

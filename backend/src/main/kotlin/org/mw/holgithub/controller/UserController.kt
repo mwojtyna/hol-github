@@ -6,9 +6,11 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
 import org.mw.holgithub.dto.ApiUserSigninPostRequest
 import org.mw.holgithub.dto.ApiUserSignupPostRequest
+import org.mw.holgithub.dto.AuthDto
 import org.mw.holgithub.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -18,7 +20,11 @@ class UserController(
 ) {
 
     @PostMapping("/signup")
-    fun signUp(@Valid @RequestBody body: ApiUserSignupPostRequest): ResponseEntity<Success> {
+    fun signUp(
+        @Valid @RequestBody body: ApiUserSignupPostRequest,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+    ): ResponseEntity<Success> {
         service.signUp(body.username, body.password)
         return ResponseEntity(HttpStatus.CREATED)
     }
@@ -36,12 +42,13 @@ class UserController(
     fun signOut(
         request: HttpServletRequest,
         response: HttpServletResponse,
+        @AuthenticationPrincipal auth: AuthDto,
     ) {
-        service.signOut(request, response)
+        service.signOut(request, response, auth)
     }
 
     @GetMapping("/test")
-    fun test(): String {
-        return "test"
+    fun test(@AuthenticationPrincipal authDto: AuthDto): AuthDto {
+        return authDto
     }
 }
