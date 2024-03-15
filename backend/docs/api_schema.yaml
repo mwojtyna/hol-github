@@ -3,86 +3,86 @@ info:
   title: API
   version: 1.0.0
 paths:
-  # /api/game/new:
-  #   post:
-  #     summary: Start a new game
-  #     responses:
-  #       200:
-  #         description: OK
-  #         content:
-  #           multipart/form-data:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 left_image:
-  #                   type: string
-  #                   format: binary
-  #                 right_image:
-  #                   type: string
-  #                   format: binary
-  #                 repos:
-  #                   type: object
-  #                   properties:
-  #                     left:
-  #                       type: object
-  #                       properties:
-  #                         name:
-  #                           type: string
-  #                     right:
-  #                       type: object
-  #                       properties:
-  #                         name:
-  #                           type: string
+  #  /api/game/new:
+  #    post:
+  #      summary: Start a new game
+  #      responses:
+  #        200:
+  #          description: OK
+  #          content:
+  #            multipart/form-data:
+  #              schema:
+  #                type: object
+  #                properties:
+  #                  game_id:
+  #                    type: string
+  #                  left_image:
+  #                    type: string
+  #                    format: binary
+  #                  right_image:
+  #                    type: string
+  #                    format: binary
+  #                  repos:
+  #                    type: object
+  #                    properties:
+  #                      left:
+  #                        type: object
+  #                        properties:
+  #                          name:
+  #                            type: string
+  #                      right:
+  #                        type: object
+  #                        properties:
+  #                          name:
+  #                            type: string
   #
-  # /api/game/choose:
-  #   post:
-  #     summary: Submit choice
-  #     requestBody:
-  #       required: true
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               choice:
-  #                 type: string
-  #                 enum: [ left, right ]
-  #     responses:
-  #       422:
-  #         description: Player tried to submit a choice without starting a game
-  #       200:
-  #         description: OK
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 result:
-  #                   type: string
-  #                   enum: [ correct, wrong ]
-  #                 next:
-  #                   required: [ ]
-  #                   type: object
-  #                   properties:
-  #                     next_image:
-  #                       type: string
-  #                       format: binary
-  #                     next_repo:
-  #                       type: object
-  #                       properties:
-  #                         name:
-  #                           type: string
+  #  /api/game/choose:
+  #    post:
+  #      summary: Submit choice
+  #      requestBody:
+  #        content:
+  #          application/json:
+  #            schema:
+  #              type: object
+  #              properties:
+  #                game_id:
+  #                  type: string
+  #                choice:
+  #                  type: string
+  #                  enum: [ left, right ]
+  #      responses:
+  #        422:
+  #          description: Player tried to submit a choice without starting a game
+  #        200:
+  #          description: OK
+  #          content:
+  #            application/json:
+  #              schema:
+  #                type: object
+  #                properties:
+  #                  result:
+  #                    type: string
+  #                    enum: [ correct, wrong ]
+  #                  next:
+  #                    type: object
+  #                    properties:
+  #                      next_image:
+  #                        type: string
+  #                        format: binary
+  #                      next_repo:
+  #                        type: object
+  #                        properties:
+  #                          name:
+  #                            type: string
 
   /api/user/signup:
     post:
       summary: Sign up a new user
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               type: object
-              required: [ username, password ]
               properties:
                 username:
                   type: string
@@ -104,12 +104,10 @@ paths:
     post:
       summary: Sign in
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               type: object
-              required: [ username, password ]
               properties:
                 username:
                   minLength: 1
