@@ -26,6 +26,7 @@ class UserController(
         response: HttpServletResponse,
     ): ResponseEntity<Success> {
         service.signUp(body.username, body.password)
+        service.signIn(body.username, body.password, request, response)
         return ResponseEntity(HttpStatus.CREATED)
     }
 

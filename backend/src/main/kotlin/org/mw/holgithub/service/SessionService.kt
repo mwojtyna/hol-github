@@ -9,6 +9,7 @@ import org.mw.holgithub.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class SessionService(
@@ -52,6 +53,8 @@ class SessionService(
         val user = userRepository.findByUsername(username)
             ?: throw UserNotFoundException("User not found")
 
+        repository.deleteAllByUserId(user.id!!)
+
         val session = SessionModel(
             id = UUID.randomUUID(),
             user = user,
@@ -61,6 +64,7 @@ class SessionService(
     }
 
     fun deleteSession(sessionId: UUID) {
-        repository.deleteById(sessionId)
+        val session = repository.findById(sessionId).getOrNull() ?: return;
+        repository.deleteAllByUserId(session.user.id!!)
     }
 }

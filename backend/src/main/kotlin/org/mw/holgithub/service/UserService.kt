@@ -7,6 +7,7 @@ import org.mw.holgithub.exception.UserAlreadyExistsException
 import org.mw.holgithub.model.UserModel
 import org.mw.holgithub.repository.UserRepository
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -18,6 +19,11 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val sessionService: SessionService,
 ) {
+    companion object {
+        const val EMPTY_PASSWORD_HASHED =
+            "\$argon2i\$v=19\$m=19456,t=2,p=1\$vq+PjhCuFdb2QP7duk9Ftg\$vPm1zQHyVacvlN1GVRlPnqd1N3sgABPEYo3eCR2D16k";
+    }
+
     fun signUp(username: String, password: String) {
         try {
             repository.save(
@@ -36,6 +42,11 @@ class UserService(
         request: HttpServletRequest,
         response: HttpServletResponse,
     ) {
+        val user = repository.findByUsername(username)
+        if (!passwordEncoder.matches(password, user?.password ?: EMPTY_PASSWORD_HASHED)) {
+            throw BadCredentialsException("Password is incorrect")
+        }
+
         // Create a new session
         val session = sessionService.createSession(username)
 
