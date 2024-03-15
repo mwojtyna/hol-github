@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UserService(
@@ -44,15 +45,24 @@ class UserService(
     ) {
         val user = repository.findByUsername(username)
         if (!passwordEncoder.matches(password, user?.password ?: EMPTY_PASSWORD_HASHED)) {
-            throw BadCredentialsException("Password is incorrect")
+            throw BadCredentialsException("Username or password is incorrect")
+        }
+
+        val previousCookie = sessionService.getSessionCookie(request)
+        if (previousCookie != null) {
+            try {
+                val sessionId = UUID.fromString(previousCookie.value)
+                sessionService.deleteSession(sessionId)
+            } catch (_: IllegalArgumentException) {
+            }
         }
 
         // Create a new session
         val session = sessionService.createSession(username)
 
         // Create a new cookie with the session id
-        val cookie = sessionService.createSessionCookie(session.id.toString())
-        response.addCookie(cookie)
+        val newCookie = sessionService.createSessionCookie(session.id.toString())
+        response.addCookie(newCookie)
     }
 
     fun signOut(

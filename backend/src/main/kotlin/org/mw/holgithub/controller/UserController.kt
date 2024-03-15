@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*
 class UserController(
     private val service: UserService,
 ) {
-
     @PostMapping("/signup")
     fun signUp(
         @Valid @RequestBody body: ApiUserSignupPostRequest,
