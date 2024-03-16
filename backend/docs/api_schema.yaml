@@ -87,11 +87,9 @@ paths:
                 username:
                   type: string
                   minLength: 1
-                  maxLength: 255
                 password:
                   type: string
                   pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$'
-                  maxLength: 255
       responses:
         200:
           description: OK
