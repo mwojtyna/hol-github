@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,7 +13,9 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
+	"github.com/google/uuid"
 	"github.com/h2non/bimg"
+	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -51,9 +54,23 @@ var logger = log.NewWithOptions(os.Stderr, log.Options{
 })
 
 func main() {
-	env, err := godotenv.Read("../.env")
+	env, err := godotenv.Read()
 	if err != nil {
 		logger.Fatal("Error loading .env file", "error", err.Error())
+	}
+	dbUrl := GetEnv("DB_URL", env)
+	noCheck := GetEnv("NO_INCOMPLETE_CHECK", env)
+
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, dbUrl)
+	if err != nil {
+		logger.Fatal("Connection with db failed", "db_url", dbUrl)
+	}
+	defer conn.Close(ctx)
+
+	_, err1 := conn.Exec(ctx, `TRUNCATE TABLE "repo"`)
+	if err1 != nil {
+		logger.Fatal("Failed to truncate table", "error", err1.Error())
 	}
 
 	res, err := fetchGhApi()
@@ -61,14 +78,12 @@ func main() {
 		logger.Fatal("Failed fetching GitHub API", "error", err.Error())
 	}
 
-	_, noCheck := GetEnv("NO_INCOMPLETE_CHECK", env)
-	for i := 0; !noCheck && res.IncompleteResults == true; i++ {
+	for i := 0; noCheck == "" && res.IncompleteResults == true; i++ {
 		logger.Warn(fmt.Sprintf("Incomplete results, retrying in %ds...", RETRY_DELAY_S))
 		time.Sleep(RETRY_DELAY_S * time.Second)
 		fetchGhApi()
 	}
 
-	var repos []Repo
 	ch := make(FetchRepoChan)
 	var wg sync.WaitGroup
 	for _, item := range res.Items {
@@ -81,20 +96,24 @@ func main() {
 		close(ch)
 	}()
 
+	var repos []Repo
 	for result := range ch {
 		if result.error != nil {
-			logger.Error("Error fetching repo", "error", result.error.Error())
 			continue
 		}
 
 		repo := result.repo
 		repos = append(repos, repo)
 
-		// TODO: Replace with saving to db
-		logger.Debug("Saving og image", "repo_name", repo.name)
-		err := os.WriteFile("img/"+strings.Split(repo.name, "/")[1], repo.image, 0666)
+		id, err := uuid.NewRandom()
 		if err != nil {
-			logger.Error("Error saving image", "repo_name", repo.name, "error", err.Error())
+			logger.Fatal("Failed generating UUID", "error", err.Error())
+		}
+
+		logger.Debug("Inserting repo into db", "repo", repo.name)
+		_, err1 := conn.Exec(context.Background(), `INSERT INTO "repo" (id, name, description, star_amount, image) VALUES ($1, $2, $3, $4, $5)`, id, repo.name, repo.description, repo.stars, repo.image)
+		if err1 != nil {
+			logger.Fatal("Failed inserting", "repo_name", repo, "error", err1.Error())
 		}
 	}
 

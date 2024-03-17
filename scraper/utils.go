@@ -14,15 +14,15 @@ func GetJsonProperty[T any](object map[string]any, name string) T {
 	return prop
 }
 
-func GetEnv(name string, dotenv map[string]string) (string, bool) {
+func GetEnv(name string, dotenv map[string]string) string {
 	val1, ok1 := os.LookupEnv(name)
 	val2, ok2 := dotenv[name]
 
 	if !ok1 && !ok2 {
-		return "", false
+		return ""
 	} else if ok1 {
-		return val1, true
+		return val1
 	} else {
-		return val2, true
+		return val2
 	}
 }
