@@ -21,6 +21,8 @@ erDiagram
 
     repo {
         uuid id PK
+        text name
+        text description
         integer star_amount
         bytea image
     }
