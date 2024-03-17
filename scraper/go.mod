@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/charmbracelet/log v0.3.1
 	github.com/h2non/bimg v1.1.9
+	github.com/joho/godotenv v1.5.1
 )
 
 require (

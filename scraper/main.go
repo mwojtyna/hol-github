@@ -13,6 +13,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/h2non/bimg"
+	"github.com/joho/godotenv"
 )
 
 type (
@@ -50,12 +51,18 @@ var logger = log.NewWithOptions(os.Stderr, log.Options{
 })
 
 func main() {
+	env, err := godotenv.Read("../.env")
+	if err != nil {
+		logger.Fatal("Error loading .env file", "error", err.Error())
+	}
+
 	res, err := fetchGhApi()
 	if err != nil {
 		logger.Fatal("Failed fetching GitHub API", "error", err.Error())
 	}
 
-	for i := 0; res.IncompleteResults == true; i++ {
+	_, noCheck := GetEnv("NO_INCOMPLETE_CHECK", env)
+	for i := 0; !noCheck && res.IncompleteResults == true; i++ {
 		logger.Warn(fmt.Sprintf("Incomplete results, retrying in %ds...", RETRY_DELAY_S))
 		time.Sleep(RETRY_DELAY_S * time.Second)
 		fetchGhApi()
@@ -188,7 +195,7 @@ func fetchImage(repoUrl *url.URL) ([]byte, error) {
 	return resized, nil
 }
 func getImageUrl(repoUrl *url.URL) (*url.URL, error) {
-	logger.Debug("Getting OG image url", "repo_name", repoUrl.String())
+	logger.Debug("Getting OG image url", "repo_url", repoUrl.String())
 
 	res, err := http.Get(repoUrl.String())
 	if err != nil {

@@ -2,7 +2,6 @@
 
 ### Notes:
 
-- All primary keys are UUIDs
 - All columns are NOT NULL, unless specified otherwise
 
 ```mermaid
