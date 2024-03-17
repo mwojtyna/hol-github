@@ -13,6 +13,9 @@ data class RepoModel(
     @Column(name = "name", unique = true, nullable = false, columnDefinition = "text")
     val name: String,
 
+    @Column(name = "description", nullable = false, columnDefinition = "text")
+    val description: String,
+
     @Column(name = "star_amount", nullable = false)
     val starAmount: Int,
 
