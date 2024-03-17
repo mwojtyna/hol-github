@@ -68,9 +68,9 @@ func main() {
 	}
 	defer conn.Close(ctx)
 
-	_, err1 := conn.Exec(ctx, `TRUNCATE TABLE "repo"`)
-	if err1 != nil {
-		logger.Fatal("Failed to truncate table", "error", err1.Error())
+	_, err = conn.Exec(ctx, `TRUNCATE TABLE "repo"`)
+	if err != nil {
+		logger.Fatal("Failed to truncate table", "error", err.Error())
 	}
 
 	res, err := fetchGhApi()
@@ -96,25 +96,34 @@ func main() {
 		close(ch)
 	}()
 
-	var repos []Repo
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		logger.Fatal("Failed to begin transaction", "error", err)
+	}
+	defer tx.Rollback(ctx)
+
 	for result := range ch {
 		if result.error != nil {
 			continue
 		}
 
 		repo := result.repo
-		repos = append(repos, repo)
 
 		id, err := uuid.NewRandom()
 		if err != nil {
 			logger.Fatal("Failed generating UUID", "error", err.Error())
 		}
 
-		logger.Debug("Inserting repo into db", "repo", repo.name)
-		_, err1 := conn.Exec(context.Background(), `INSERT INTO "repo" (id, name, description, star_amount, image) VALUES ($1, $2, $3, $4, $5)`, id, repo.name, repo.description, repo.stars, repo.image)
-		if err1 != nil {
-			logger.Fatal("Failed inserting", "repo_name", repo, "error", err1.Error())
+		logger.Debug("Inserting repo into db", "repo_name", repo.name)
+		_, err = tx.Exec(context.Background(), `INSERT INTO "repo" (id, name, description, star_amount, image) VALUES ($1, $2, $3, $4, $5)`, id, repo.name, repo.description, repo.stars, repo.image)
+		if err != nil {
+			logger.Fatal("Failed inserting", "repo_name", repo.name, "error", err.Error())
 		}
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		logger.Fatal("Failed to commit transaction", "error", err)
 	}
 
 	logger.Info("Saved OG images successfully")
