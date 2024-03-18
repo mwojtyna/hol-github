@@ -14,9 +14,9 @@ data class GameModel(
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserModel,
 
-    @OneToOne(targetEntity = GameStateModel::class, cascade = [CascadeType.ALL])
+    @OneToOne(targetEntity = GameStateModel::class, optional = true)
     @JoinColumn(name = "game_state_id", nullable = true)
-    val gameState: GameStateModel,
+    var gameState: GameStateModel?,
 
     @Column(name = "score", nullable = false)
     var score: Int,

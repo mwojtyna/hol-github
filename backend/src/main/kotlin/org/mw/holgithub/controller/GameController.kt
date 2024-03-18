@@ -20,11 +20,13 @@ class GameController(private val service: GameService) {
     @PostMapping("/new", produces = ["multipart/form-data"])
     fun new(@AuthenticationPrincipal auth: AuthDto): ResponseEntity<LinkedMultiValueMap<String, Any>> {
         val game = service.createGame(auth)
+        val gameState = game.gameState!!
+
         val firstRepo = RepoDto(
-            game.gameState.firstRepo.name, game.gameState.firstRepo.description
+            gameState.firstRepo.name, gameState.firstRepo.description
         )
         val secondRepo = RepoDto(
-            game.gameState.secondRepo.name, game.gameState.secondRepo.description
+            gameState.secondRepo.name, gameState.secondRepo.description
         )
 
         val gameIdHeaders = LinkedMultiValueMap<String, String>()
@@ -33,13 +35,13 @@ class GameController(private val service: GameService) {
         val firstImageHeaders = LinkedMultiValueMap<String, String>()
         firstImageHeaders.set(
             "Content-Type",
-            URLConnection.guessContentTypeFromStream(ByteArrayInputStream(game.gameState.firstRepo.image))
+            URLConnection.guessContentTypeFromStream(ByteArrayInputStream(gameState.firstRepo.image))
         )
 
         val secondImageHeaders = LinkedMultiValueMap<String, String>()
         secondImageHeaders.set(
             "Content-Type",
-            URLConnection.guessContentTypeFromStream(ByteArrayInputStream(game.gameState.secondRepo.image))
+            URLConnection.guessContentTypeFromStream(ByteArrayInputStream(gameState.secondRepo.image))
         )
 
         val reposHeaders = LinkedMultiValueMap<String, String>()
@@ -47,8 +49,8 @@ class GameController(private val service: GameService) {
 
         val formData = LinkedMultiValueMap<String, Any>()
         formData.add("gameId", HttpEntity(game.id.toString(), gameIdHeaders))
-        formData.add("firstImage", HttpEntity(game.gameState.firstRepo.image, firstImageHeaders))
-        formData.add("secondImage", HttpEntity(game.gameState.secondRepo.image, secondImageHeaders))
+        formData.add("firstImage", HttpEntity(gameState.firstRepo.image, firstImageHeaders))
+        formData.add("secondImage", HttpEntity(gameState.secondRepo.image, secondImageHeaders))
         formData.add(
             "repos",
             HttpEntity(ApiGameNewPostResponseReposPart(firstRepo, secondRepo), reposHeaders)

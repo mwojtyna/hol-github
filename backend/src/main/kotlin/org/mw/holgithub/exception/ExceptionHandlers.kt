@@ -44,4 +44,9 @@ class ExceptionHandlers {
     fun userAlreadyExistsExceptionHandler(exception: UserAlreadyExistsException): ResponseEntity<Error> {
         return ResponseEntity(HttpStatus.CONFLICT)
     }
+
+    @ExceptionHandler(GameAlreadyEndedException::class)
+    fun gameAlreadyEndedExceptionHandler(exception: GameAlreadyEndedException): ResponseEntity<Error> {
+        return ResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY)
+    }
 }

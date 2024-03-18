@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager
 import org.mw.holgithub.dto.ApiGameChoosePostRequestChoice
 import org.mw.holgithub.dto.ApiGameChoosePostResponseResult
 import org.mw.holgithub.dto.AuthDto
+import org.mw.holgithub.exception.GameAlreadyEndedException
 import org.mw.holgithub.model.GameModel
 import org.mw.holgithub.model.GameStateModel
 import org.mw.holgithub.model.RepoModel
@@ -19,6 +20,17 @@ class GameService(
     private val entityManager: EntityManager,
 ) {
     fun createGame(auth: AuthDto): GameModel {
+        for (game in repository.getAllByUserId(auth.user.id!!)) {
+            if (game.gameState == null) {
+                continue
+            }
+
+            val gameState = game.gameState!!
+            game.gameState = null
+            repository.save(game)
+            gameStateRepository.delete(gameState)
+        }
+
         val firstRepo = getRandomRepo()
         var secondRepo = getRandomRepo()
         while (secondRepo.id == firstRepo.id) {
@@ -26,45 +38,56 @@ class GameService(
         }
 
         val gameState = GameStateModel(firstRepo = firstRepo, secondRepo = secondRepo)
+        gameStateRepository.save(gameState)
+
         val game = GameModel(user = auth.user, gameState = gameState, score = 0)
         repository.save(game)
 
         return game
     }
 
-    /** @throws NoSuchElementException */
+    /** @throws GameAlreadyEndedException */
     fun chooseRepo(
         gameId: UUID,
         choice: ApiGameChoosePostRequestChoice,
     ): ChooseRepoResult {
         val game = repository.findById(gameId).orElseThrow()
+        val gameState = game.gameState ?: throw GameAlreadyEndedException()
+
         val onCorrect = fun(): RepoModel {
             game.score++
             repository.save(game)
 
             val nextRepo = getRandomRepo()
-            game.gameState.firstRepo = game.gameState.secondRepo
-            game.gameState.secondRepo = nextRepo
-            gameStateRepository.save(game.gameState)
+            gameState.firstRepo = gameState.secondRepo
+            gameState.secondRepo = nextRepo
+            gameStateRepository.save(gameState)
 
             return nextRepo
+        }
+        val onWrong = fun() {
+            game.gameState = null
+            repository.save(game)
+            gameStateRepository.delete(gameState)
         }
 
         when (choice) {
             ApiGameChoosePostRequestChoice.HIGHER -> {
-                if (game.gameState.secondRepo.starAmount >= game.gameState.firstRepo.starAmount) {
+                if (gameState.secondRepo.starAmount >= gameState.firstRepo.starAmount) {
                     val nextRepo = onCorrect()
                     return ChooseRepoResult(ApiGameChoosePostResponseResult.CORRECT, nextRepo)
                 } else {
+                    onWrong()
                     return ChooseRepoResult(ApiGameChoosePostResponseResult.WRONG)
                 }
             }
 
             ApiGameChoosePostRequestChoice.LOWER -> {
-                if (game.gameState.secondRepo.starAmount <= game.gameState.firstRepo.starAmount) {
+                if (gameState.secondRepo.starAmount <= gameState.firstRepo.starAmount) {
                     val nextRepo = onCorrect()
                     return ChooseRepoResult(ApiGameChoosePostResponseResult.CORRECT, nextRepo)
                 } else {
+                    onWrong()
                     return ChooseRepoResult(ApiGameChoosePostResponseResult.WRONG)
                 }
             }
