@@ -15,6 +15,10 @@ data class SessionModel(
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserModel,
 
+    @OneToOne(targetEntity = GameModel::class, optional = true)
+    @JoinColumn(name = "current_game_id", nullable = true)
+    var currentGame: GameModel? = null,
+
     @Column(name = "expire_date", nullable = false)
     val expireDate: Timestamp,
 )

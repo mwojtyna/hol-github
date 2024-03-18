@@ -14,8 +14,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  gameId:
-                    type: string
                   firstImage:
                     type: string
                     format: binary
@@ -49,8 +47,6 @@ paths:
             schema:
               type: object
               properties:
-                gameId:
-                  type: string
                 choice:
                   type: string
                   enum: [ HIGHER, LOWER ]

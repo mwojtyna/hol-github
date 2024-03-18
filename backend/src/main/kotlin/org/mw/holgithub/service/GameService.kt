@@ -4,12 +4,12 @@ import jakarta.persistence.EntityManager
 import org.mw.holgithub.dto.ApiGameChoosePostRequestChoice
 import org.mw.holgithub.dto.ApiGameChoosePostResponseResult
 import org.mw.holgithub.dto.AuthDto
-import org.mw.holgithub.exception.GameAlreadyEndedException
 import org.mw.holgithub.model.GameModel
 import org.mw.holgithub.model.GameStateModel
 import org.mw.holgithub.model.RepoModel
 import org.mw.holgithub.repository.GameRepository
 import org.mw.holgithub.repository.GameStateRepository
+import org.mw.holgithub.repository.SessionRepository
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -17,6 +17,7 @@ import java.util.*
 class GameService(
     private val repository: GameRepository,
     private val gameStateRepository: GameStateRepository,
+    private val sessionRepository: SessionRepository,
     private val entityManager: EntityManager,
 ) {
     fun createGame(auth: AuthDto): GameModel {
@@ -43,16 +44,23 @@ class GameService(
         val game = GameModel(user = auth.user, gameState = gameState, score = 0)
         repository.save(game)
 
+        val session = sessionRepository.findById(auth.sessionId).get()
+        session.currentGame = game
+        sessionRepository.save(session)
+
         return game
     }
 
-    /** @throws GameAlreadyEndedException */
+    /** @throws IllegalStateException */
     fun chooseRepo(
         gameId: UUID,
         choice: ApiGameChoosePostRequestChoice,
+        auth: AuthDto,
     ): ChooseRepoResult {
         val game = repository.findById(gameId).orElseThrow()
-        val gameState = game.gameState ?: throw GameAlreadyEndedException()
+        val gameState = game.gameState
+            ?: throw IllegalStateException("Game state is null but session has a current game")
+        val session = sessionRepository.findById(auth.sessionId).get()
 
         val onCorrect = fun(): RepoModel {
             game.score++
@@ -68,6 +76,10 @@ class GameService(
         val onWrong = fun() {
             game.gameState = null
             repository.save(game)
+
+            session.currentGame = null
+            sessionRepository.save(session)
+
             gameStateRepository.delete(gameState)
         }
 
