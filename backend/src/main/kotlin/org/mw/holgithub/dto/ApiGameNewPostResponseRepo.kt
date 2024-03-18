@@ -1,11 +1,7 @@
 package org.mw.holgithub.dto
 
 data class ApiGameNewPostResponseReposPart(
-    val first: ApiGameNewPostResponseRepo,
-    val second: ApiGameNewPostResponseRepo,
+    val first: RepoDto,
+    val second: RepoDto,
 )
 
-data class ApiGameNewPostResponseRepo(
-    val name: String,
-    val description: String,
-)

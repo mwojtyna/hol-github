@@ -53,33 +53,38 @@ paths:
                   type: string
                 choice:
                   type: string
-                  enum: [ higher, lower ]
+                  enum: [ HIGHER, LOWER ]
       responses:
         404:
           description: Game with provided id doesn't exist
         200:
           description: OK
           content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+                    enum: [ WRONG ]
+
             multipart/form-data:
               schema:
                 type: object
                 properties:
                   result:
                     type: string
-                    enum: [ correct, wrong ]
-                  next:
+                    enum: [ CORRECT ]
+                  nextImage:
+                    type: string
+                    format: binary
+                  nextRepo:
                     type: object
                     properties:
-                      image:
+                      name:
                         type: string
-                        format: binary
-                      repo:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          description:
-                            type: string
+                      description:
+                        type: string
 
   /api/user/signup:
     post:

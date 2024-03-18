@@ -19,5 +19,5 @@ data class GameModel(
     val gameState: GameStateModel,
 
     @Column(name = "score", nullable = false)
-    val score: Int,
+    var score: Int,
 )

@@ -30,6 +30,10 @@ class ExceptionHandlers {
         return HashMap(errors)
     }
 
+    @ExceptionHandler(NoSuchElementException::class)
+    fun noSuchElementExceptionHandler(exception: NoSuchElementException): ResponseEntity<Error> {
+        return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
 
     @ExceptionHandler(UserNotFoundException::class)
     fun userNotFoundExceptionHandler(exception: UserNotFoundException): ResponseEntity<Error> {

@@ -12,9 +12,9 @@ data class GameStateModel(
 
     @OneToOne(targetEntity = RepoModel::class)
     @JoinColumn(name = "first_repo_id", nullable = false)
-    val firstRepo: RepoModel,
+    var firstRepo: RepoModel,
 
     @OneToOne(targetEntity = RepoModel::class)
     @JoinColumn(name = "second_repo_id", nullable = false)
-    val secondRepo: RepoModel,
+    var secondRepo: RepoModel,
 )
