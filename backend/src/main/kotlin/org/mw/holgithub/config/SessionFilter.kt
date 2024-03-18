@@ -44,7 +44,7 @@ class SessionFilter(private val service: SessionService) : OncePerRequestFilter(
         }
 
         SecurityContextHolder.getContext().authentication =
-            PreAuthenticatedAuthenticationToken(AuthDto(session.user.username, session.id), null)
+            PreAuthenticatedAuthenticationToken(AuthDto(session.user, session.id), null)
 
         filterChain.doFilter(request, response)
     }

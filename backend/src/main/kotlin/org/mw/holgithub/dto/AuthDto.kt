@@ -1,8 +1,9 @@
 package org.mw.holgithub.dto
 
+import org.mw.holgithub.model.UserModel
 import java.util.*
 
 data class AuthDto(
-    val username: String,
+    val user: UserModel,
     val sessionId: UUID,
 )

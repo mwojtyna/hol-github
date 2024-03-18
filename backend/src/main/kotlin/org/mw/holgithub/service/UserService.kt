@@ -29,7 +29,8 @@ class UserService(
         try {
             repository.save(
                 UserModel(
-                    username = username, password = passwordEncoder.encode(password)
+                    username = username,
+                    password = passwordEncoder.encode(password)
                 )
             )
         } catch (_: DataIntegrityViolationException) {

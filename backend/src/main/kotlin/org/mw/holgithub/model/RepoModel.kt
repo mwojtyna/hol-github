@@ -19,7 +19,6 @@ data class RepoModel(
     @Column(name = "star_amount", nullable = false)
     val starAmount: Int,
 
-    @Lob
     @Column(name = "image", nullable = false, columnDefinition = "bytea")
     val image: ByteArray,
 ) {

@@ -68,11 +68,6 @@ func main() {
 	}
 	defer conn.Close(ctx)
 
-	_, err = conn.Exec(ctx, `TRUNCATE TABLE "repo"`)
-	if err != nil {
-		logger.Fatal("Failed to truncate table", "error", err.Error())
-	}
-
 	res, err := fetchGhApi()
 	if err != nil {
 		logger.Fatal("Failed fetching GitHub API", "error", err.Error())
@@ -95,6 +90,11 @@ func main() {
 		wg.Wait()
 		close(ch)
 	}()
+
+	_, err = conn.Exec(ctx, `TRUNCATE TABLE "repo" CASCADE`)
+	if err != nil {
+		logger.Fatal("Failed to truncate table", "error", err.Error())
+	}
 
 	tx, err := conn.Begin(ctx)
 	if err != nil {
