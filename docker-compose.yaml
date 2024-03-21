@@ -13,5 +13,19 @@ services:
       - 5432:5432
     entrypoint: docker-entrypoint.sh -c 'shared_buffers=256MB' -c 'max_connections=200'
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8.4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - 3001:80
+    depends_on:
+      - db
+
 volumes:
   pgdata:
+  pgadmin:
