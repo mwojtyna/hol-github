@@ -1,11 +1,11 @@
 _type: export
 __export_format: 4
-__export_date: 2024-03-18T19:13:14.081Z
+__export_date: 2024-03-21T19:03:19.175Z
 __export_source: insomnia.desktop.app:v0.2.3-a
 resources:
   - _id: req_06bcb506b6384e9d97e54fafd4a196a6
     parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710789084088
+    modified: 1710789563732
     created: 1710287069355
     url: http://localhost:3000/api/user/signup
     name: user/signup
@@ -13,10 +13,10 @@ resources:
     method: POST
     body:
       mimeType: application/json
-      text: |
+      text: |-
         {
-            "username": "mati",
-            "password": "Zaq1@wsx"
+        	"username": "mati",
+        	"password": "Zaq1@wsx"
         }
     parameters: []
     headers:
@@ -45,7 +45,7 @@ resources:
     _type: workspace
   - _id: req_64ea65a5def749b1b6f8777ad45876fe
     parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710789087476
+    modified: 1710789566175
     created: 1710289066946
     url: http://localhost:3000/api/user/signin
     name: user/signin
@@ -53,10 +53,10 @@ resources:
     method: POST
     body:
       mimeType: application/json
-      text: |
+      text: |-
         {
-            "username": "mati",
-            "password": "Zaq1@wsx"
+        	"username": "mati",
+        	"password": "Zaq1@wsx"
         }
     parameters: []
     headers:
@@ -123,6 +123,37 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
+  - _id: req_82554d85234f4d66a5f427316bf929f4
+    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
+    modified: 1710806311313
+    created: 1710789580705
+    url: http://localhost:3000/api/game/choose
+    name: game/choose
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"choice": "HIGHER"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnium/0.2.3-a
+    authentication: {}
+    metaSortKey: -1710287069104
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    segmentParams: []
+    _type: request
   - _id: env_1617506bd1e14e3dae3ca9766301c832
     parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
     modified: 1710292465489
@@ -136,13 +167,13 @@ resources:
     _type: environment
   - _id: jar_826c4a2ed7a042e1bcd84fc411c96e4f
     parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710788409758
+    modified: 1711047504105
     created: 1710292466489
     name: Default Jar
     cookies:
       - key: SESSION_ID
-        value: fa9c8e31-535f-4a22-b2ff-a5a9819f7cbb
-        expires: 2024-03-25T19:00:09.000Z
+        value: 0ebc218e-fba9-4d4c-a252-50ba184c539f
+        expires: 2024-03-28T18:58:24.000Z
         maxAge: 604800
         domain: localhost
         path: /api
@@ -150,7 +181,7 @@ resources:
         httpOnly: true
         hostOnly: true
         creation: 2024-03-15T15:55:48.760Z
-        lastAccessed: 2024-03-18T19:00:09.758Z
+        lastAccessed: 2024-03-21T18:58:24.105Z
         sameSite: strict
-        id: "21823418914101023"
+        id: "8717515953791835"
     _type: cookie_jar
