@@ -3,35 +3,17 @@ package com.example.hol_github_frontend
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.hol_github_frontend.composable.SignUpForm
-import com.example.hol_github_frontend.ui.theme.AppTheme
+import com.example.hol_github_frontend.screen.signup.SignUpScreen
+import com.example.hol_github_frontend.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                SignUpForm()
+                // Change to home screen
+                SignUpScreen()
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun DefaultPreview() {
-    AppTheme {
-        SignUpForm()
     }
 }

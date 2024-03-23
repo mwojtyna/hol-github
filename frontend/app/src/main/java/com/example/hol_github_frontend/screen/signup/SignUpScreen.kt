@@ -1,4 +1,4 @@
-package com.example.hol_github_frontend.composable
+package com.example.hol_github_frontend.screen.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,12 +34,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.hol_github_frontend.R
-import com.example.hol_github_frontend.ui.theme.AppTheme
-import com.example.hol_github_frontend.ui.theme.Typography
-import com.example.hol_github_frontend.viewmodel.SignUpViewModel
+import com.example.hol_github_frontend.composable.PasswordField
+import com.example.hol_github_frontend.theme.AppTheme
+import com.example.hol_github_frontend.theme.Typography
 
 @Composable
-fun SignUpForm(
+fun SignUpScreen(
     viewModel: SignUpViewModel = SignUpViewModel(),
     focusManager: FocusManager = LocalFocusManager.current,
 ) {
@@ -141,6 +141,6 @@ fun SignUpForm(
 @Composable
 fun Preview() {
     AppTheme(useDarkTheme = true) {
-        SignUpForm()
+        SignUpScreen()
     }
 }

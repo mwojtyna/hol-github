@@ -1,4 +1,4 @@
-package com.example.hol_github_frontend.viewmodel
+package com.example.hol_github_frontend.screen.signup
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
