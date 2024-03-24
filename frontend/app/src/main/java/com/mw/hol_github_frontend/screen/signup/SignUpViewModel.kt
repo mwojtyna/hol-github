@@ -1,14 +1,11 @@
 package com.mw.hol_github_frontend.screen.signup
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.api.ApiUserSignupRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class SignUpViewModel(context: Context) : ViewModel() {
-    private val apiClient = ApiClient(context)
-
+class SignUpViewModel(private val apiClient: ApiClient) : ViewModel() {
     val username = MutableStateFlow("")
     fun setUsername(username: String) {
         this.username.value = username

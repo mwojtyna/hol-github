@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.okhttp.urlconnection)
     implementation(libs.androidx.datastore)
     implementation(libs.protobuf.javalite.v3201)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation("androidx.navigation:navigation-compose")
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

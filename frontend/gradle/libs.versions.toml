@@ -15,6 +15,7 @@ composeBom = "2023.08.00"
 material3 = "1.2.1"
 constraintlayoutCompose = "1.0.1"
 materialIconsExtended = "1.6.4"
+navigationFragmentKtx = "2.7.7"
 okhttp = "4.12.0"
 okhttpUrlconnection = "3.6.0"
 protobufJavalite = "3.18.0"
@@ -30,6 +31,8 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version = "2.10.0" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }

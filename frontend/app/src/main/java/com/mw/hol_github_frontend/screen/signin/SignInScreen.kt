@@ -1,4 +1,4 @@
-package com.mw.hol_github_frontend.screen.signup
+package com.mw.hol_github_frontend.screen.signin
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,18 +43,15 @@ import com.mw.hol_github_frontend.theme.Typography
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignUpScreen(
+fun SignInScreen(
     apiClient: ApiClient,
-    viewModel: SignUpViewModel = SignUpViewModel(apiClient),
+    viewModel: SignInViewModel = SignInViewModel(apiClient),
     focusManager: FocusManager = LocalFocusManager.current,
-    navigateToSignIn: () -> Unit,
+    navigateToSignUp: () -> Unit,
 ) {
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
-    val repeatedPassword by viewModel.repeatedPassword.collectAsState()
-
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var repeatedPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -65,7 +62,7 @@ fun SignUpScreen(
             modifier = Modifier.padding(56.dp)
         ) {
             Text(
-                "Sign up",
+                "Sign in",
                 style = Typography.headlineLarge,
                 textAlign = TextAlign.Center,
             )
@@ -102,20 +99,6 @@ fun SignUpScreen(
                         focusManager.moveFocus(FocusDirection.Down)
                     }),
                 )
-
-                PasswordField(
-                    password = repeatedPassword,
-                    onPasswordChange = viewModel::setRepeatedPassword,
-                    label = stringResource(R.string.signup_repeated_password_label),
-                    isVisible = repeatedPasswordVisible,
-                    onVisibilityChange = { repeatedPasswordVisible = it },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        viewModel.viewModelScope.launch {
-                            viewModel.signUp(username, password, repeatedPassword)
-                        }
-                    })
-                )
             }
 
             Column(
@@ -125,21 +108,21 @@ fun SignUpScreen(
                 Button(
                     onClick = {
                         viewModel.viewModelScope.launch {
-                            viewModel.signUp(username, password, repeatedPassword)
+                            viewModel.signIn(username, password)
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        "Sign up",
+                        "Sign in",
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 5.dp)
                     )
                 }
 
-                TextButton(onClick = navigateToSignIn) {
+                TextButton(onClick = navigateToSignUp) {
                     Text(
-                        "Already have an account?",
+                        "Don't have an account yet?",
                         textAlign = TextAlign.Center,
                         style = Typography.labelMedium,
                     )
@@ -153,6 +136,6 @@ fun SignUpScreen(
 @Composable
 fun Preview() {
     AppTheme(useDarkTheme = true) {
-        SignUpScreen(apiClient = ApiClient(LocalContext.current), navigateToSignIn = {})
+        SignInScreen(apiClient = ApiClient(LocalContext.current), navigateToSignUp = {})
     }
 }

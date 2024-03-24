@@ -3,7 +3,7 @@ package com.mw.hol_github_frontend
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mw.hol_github_frontend.screen.signup.SignUpScreen
+import com.mw.hol_github_frontend.composable.Navigation
 import com.mw.hol_github_frontend.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,8 +12,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                // Change to home screen
-                SignUpScreen()
+                Navigation()
             }
         }
     }
