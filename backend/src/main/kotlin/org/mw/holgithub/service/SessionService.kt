@@ -29,7 +29,7 @@ class SessionService(
         val cookie = Cookie(COOKIE_NAME, content)
         cookie.isHttpOnly = true
         cookie.setAttribute("SameSite", "Strict")
-        cookie.secure = true
+        cookie.secure = false
         cookie.maxAge = SESSION_MAX_AGE_S
         cookie.path = "/api"
 

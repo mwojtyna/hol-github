@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.protobuf") version "0.9.4"
 }
 
 android {
-    namespace = "com.example.hol_github_frontend"
+    namespace = "com.mw.hol_github_frontend"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.hol_github_frontend"
+        applicationId = "com.mw.hol_github_frontend"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -24,8 +25,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -62,6 +62,31 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.okhttp.urlconnection)
+    implementation(libs.androidx.datastore)
+    implementation(libs.protobuf.javalite.v3201)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.21.7"
+    }
+    plugins {
+        generateProtoTasks {
+            all().forEach {
+                it.builtins {
+                    create("java") {
+                        option("lite")
+                    }
+                }
+            }
+        }
+    }
 }

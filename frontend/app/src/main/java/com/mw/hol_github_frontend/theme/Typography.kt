@@ -1,4 +1,4 @@
-package com.example.hol_github_frontend.theme
+package com.mw.hol_github_frontend.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -7,7 +7,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
-import com.example.hol_github_frontend.R
+import com.mw.hol_github_frontend.R
 
 val fontProvider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",

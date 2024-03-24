@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option java_package = "com.mw.hol_github_frontend.proto";
+option java_multiple_files = true;
+
+message PersistentCookie {
+  string name = 1;
+  string value = 2;
+  string domain = 3;
+  string path = 4;
+  bool httpOnly = 5;
+  bool secure = 6;
+  uint64 maxAge = 7;
+}

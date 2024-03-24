@@ -1,4 +1,4 @@
-package com.example.hol_github_frontend.theme
+package com.mw.hol_github_frontend.theme
 
 import androidx.compose.ui.graphics.Color
 

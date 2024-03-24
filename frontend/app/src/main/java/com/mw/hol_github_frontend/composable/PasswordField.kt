@@ -1,4 +1,4 @@
-package com.example.hol_github_frontend.composable
+package com.mw.hol_github_frontend.composable
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.example.hol_github_frontend.R
+import com.mw.hol_github_frontend.R
 
 @Composable
 fun PasswordField(
@@ -38,13 +38,11 @@ fun PasswordField(
             )
         },
         trailingIcon = {
-            val image =
-                if (!isVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
+            val image = if (!isVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
 
             IconButton(onClick = { onVisibilityChange(!isVisible) }) {
                 Icon(
-                    imageVector = image,
-                    stringResource(R.string.passwordfield_password_visibility)
+                    imageVector = image, stringResource(R.string.passwordfield_password_visibility)
                 )
             }
         },

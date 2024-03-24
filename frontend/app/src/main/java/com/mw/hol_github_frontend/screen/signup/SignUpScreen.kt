@@ -1,4 +1,4 @@
-package com.example.hol_github_frontend.screen.signup
+package com.mw.hol_github_frontend.screen.signup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,14 +34,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.hol_github_frontend.R
-import com.example.hol_github_frontend.composable.PasswordField
-import com.example.hol_github_frontend.theme.AppTheme
-import com.example.hol_github_frontend.theme.Typography
+import androidx.lifecycle.viewModelScope
+import com.mw.hol_github_frontend.R
+import com.mw.hol_github_frontend.composable.PasswordField
+import com.mw.hol_github_frontend.theme.AppTheme
+import com.mw.hol_github_frontend.theme.Typography
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
-    viewModel: SignUpViewModel = SignUpViewModel(),
+    viewModel: SignUpViewModel = SignUpViewModel(LocalContext.current),
     focusManager: FocusManager = LocalFocusManager.current,
 ) {
     val username by viewModel.username.collectAsState()
@@ -51,14 +54,12 @@ fun SignUpScreen(
     var repeatedPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(56.dp)
+            modifier = Modifier.padding(56.dp)
         ) {
             Text(
                 "Sign up",
@@ -89,24 +90,28 @@ fun SignUpScreen(
 
                 PasswordField(
                     password = password,
-                    onPasswordChange = { viewModel.setPassword(it) },
+                    onPasswordChange = viewModel::setPassword,
                     label = stringResource(R.string.signup_password_label),
                     isVisible = passwordVisible,
                     onVisibilityChange = { passwordVisible = it },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = {
                         focusManager.moveFocus(FocusDirection.Down)
-                    })
+                    }),
                 )
 
                 PasswordField(
                     password = repeatedPassword,
-                    onPasswordChange = { viewModel.setRepeatedPassword(it) },
+                    onPasswordChange = viewModel::setRepeatedPassword,
                     label = stringResource(R.string.signup_repeated_password_label),
                     isVisible = repeatedPasswordVisible,
                     onVisibilityChange = { repeatedPasswordVisible = it },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { println(password) })
+                    keyboardActions = KeyboardActions(onDone = {
+                        viewModel.viewModelScope.launch {
+                            viewModel.signUp(username, password, repeatedPassword)
+                        }
+                    })
                 )
             }
 
@@ -115,7 +120,11 @@ fun SignUpScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        viewModel.viewModelScope.launch {
+                            viewModel.signUp(username, password, repeatedPassword)
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
@@ -125,7 +134,9 @@ fun SignUpScreen(
                     )
                 }
 
-                TextButton(onClick = {/* TODO */ }) {
+                TextButton(onClick = {
+                    viewModel.viewModelScope.launch {/* TODO */ }
+                }) {
                     Text(
                         "Already have an account?",
                         textAlign = TextAlign.Center,

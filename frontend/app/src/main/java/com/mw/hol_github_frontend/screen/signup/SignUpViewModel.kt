@@ -1,9 +1,14 @@
-package com.example.hol_github_frontend.screen.signup
+package com.mw.hol_github_frontend.screen.signup
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.mw.hol_github_frontend.api.ApiClient
+import com.mw.hol_github_frontend.api.ApiUserSignupRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class SignUpViewModel : ViewModel() {
+class SignUpViewModel(context: Context) : ViewModel() {
+    private val apiClient = ApiClient(context)
+
     val username = MutableStateFlow("")
     fun setUsername(username: String) {
         this.username.value = username
@@ -17,5 +22,9 @@ class SignUpViewModel : ViewModel() {
     val repeatedPassword = MutableStateFlow("")
     fun setRepeatedPassword(repeatedPassword: String) {
         this.repeatedPassword.value = repeatedPassword
+    }
+
+    suspend fun signUp(username: String, password: String, repeatedPassword: String) {
+        apiClient.user.signUp(ApiUserSignupRequest(username, password))
     }
 }
