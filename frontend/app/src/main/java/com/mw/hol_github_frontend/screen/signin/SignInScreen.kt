@@ -94,9 +94,14 @@ fun SignInScreen(
                     label = stringResource(R.string.signup_password_label),
                     isVisible = passwordVisible,
                     onVisibilityChange = { passwordVisible = it },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        viewModel.viewModelScope.launch {
+                            viewModel.signIn(
+                                username,
+                                password
+                            )
+                        }
                     }),
                 )
             }
