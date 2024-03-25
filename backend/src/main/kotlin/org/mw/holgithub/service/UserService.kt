@@ -65,7 +65,7 @@ class UserService(
         sessionService.deleteSession(auth.sessionId)
 
         // Remove the session cookie
-        val cookie = sessionService.removeSessionCookie()
+        val cookie = sessionService.deleteSessionCookie()
         response.addCookie(cookie)
     }
 }

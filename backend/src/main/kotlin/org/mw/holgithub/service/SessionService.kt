@@ -1,12 +1,15 @@
 package org.mw.holgithub.service
 
+import jakarta.persistence.EntityManager
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.transaction.Transactional
 import org.mw.holgithub.exception.UserNotFoundException
 import org.mw.holgithub.model.SessionModel
 import org.mw.holgithub.repository.SessionRepository
 import org.mw.holgithub.repository.UserRepository
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.util.*
@@ -15,6 +18,7 @@ import java.util.*
 class SessionService(
     private val repository: SessionRepository,
     private val userRepository: UserRepository,
+    private val entityManager: EntityManager,
 ) {
     companion object {
         const val COOKIE_NAME = "SESSION_ID"
@@ -36,7 +40,7 @@ class SessionService(
         return cookie
     }
 
-    fun removeSessionCookie(): Cookie {
+    fun deleteSessionCookie(): Cookie {
         val cookie = createSessionCookie(null)
         cookie.maxAge = 0
         return cookie
@@ -46,7 +50,7 @@ class SessionService(
         // Errors if the session id isn't a UUID or if the session doesn't exist
         try {
             val session = repository.getReferenceById(sessionId)
-            if (session.expireDate.before(Timestamp(System.currentTimeMillis()))) {
+            if (isExpired(session.expireDate)) {
                 deleteSession(sessionId)
                 return null
             }
@@ -58,8 +62,8 @@ class SessionService(
 
     /** @throws UserNotFoundException */
     fun createSession(username: String): SessionModel {
-        val user = userRepository.findByUsername(username)
-            ?: throw UserNotFoundException("User not found")
+        val user =
+            userRepository.findByUsername(username) ?: throw UserNotFoundException("User not found")
 
         val session = SessionModel(
             id = UUID.randomUUID(),
@@ -71,5 +75,18 @@ class SessionService(
 
     fun deleteSession(sessionId: UUID) {
         repository.deleteById(sessionId)
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    @Transactional
+    fun deleteAllExpired() {
+        val query =
+            entityManager.createQuery("DELETE FROM SessionModel s WHERE s.expireDate < :now")
+        query.setParameter("now", Timestamp(System.currentTimeMillis()))
+        query.executeUpdate()
+    }
+
+    fun isExpired(date: Timestamp): Boolean {
+        return date.before(Timestamp(System.currentTimeMillis()))
     }
 }
