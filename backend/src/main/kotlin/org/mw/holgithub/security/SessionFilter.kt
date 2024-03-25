@@ -1,4 +1,4 @@
-package org.mw.holgithub.config
+package org.mw.holgithub.security
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

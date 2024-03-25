@@ -1,4 +1,4 @@
-package org.mw.holgithub.config
+package org.mw.holgithub.security
 
 import org.mw.holgithub.service.SessionService
 import org.springframework.context.annotation.Bean

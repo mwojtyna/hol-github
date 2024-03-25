@@ -36,6 +36,12 @@ class SessionService(
         return cookie
     }
 
+    fun removeSessionCookie(): Cookie {
+        val cookie = createSessionCookie(null)
+        cookie.maxAge = 0
+        return cookie
+    }
+
     fun getSession(sessionId: UUID): SessionModel? {
         // Errors if the session id isn't a UUID or if the session doesn't exist
         try {
