@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mw.hol_github_frontend.api.ApiClient
+import com.mw.hol_github_frontend.screen.main.MainScreen
 import com.mw.hol_github_frontend.screen.signin.SignInScreen
 import com.mw.hol_github_frontend.screen.signup.SignUpScreen
 
@@ -20,7 +21,7 @@ fun Navigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "signup",
+        startDestination = "signin",
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left,
@@ -48,13 +49,19 @@ fun Navigation() {
     ) {
         composable("signup") {
             SignUpScreen(apiClient = apiClient,
-                navigateToSignIn = { navController.navigate("signin") })
+                navigateToSignIn = { navController.navigate("signin") },
+                onSignUp = { navController.navigate("main") }
+            )
         }
         composable("signin") {
             SignInScreen(
                 apiClient = apiClient,
                 navigateToSignUp = { navController.navigate("signup") },
+                onSignIn = { navController.navigate("main") }
             )
+        }
+        composable("main") {
+            MainScreen()
         }
     }
 }

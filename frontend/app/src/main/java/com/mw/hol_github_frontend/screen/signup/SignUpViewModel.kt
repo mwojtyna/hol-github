@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.api.ApiUserSignupRequest
 import kotlinx.coroutines.flow.MutableStateFlow
+import retrofit2.Response
 
 class SignUpViewModel(private val apiClient: ApiClient) : ViewModel() {
     val username = MutableStateFlow("")
@@ -21,7 +22,11 @@ class SignUpViewModel(private val apiClient: ApiClient) : ViewModel() {
         this.repeatedPassword.value = repeatedPassword
     }
 
-    suspend fun signUp(username: String, password: String, repeatedPassword: String) {
-        apiClient.user.signUp(ApiUserSignupRequest(username, password))
+    suspend fun signUp(
+        username: String,
+        password: String,
+        repeatedPassword: String,
+    ): Response<Unit> {
+        return apiClient.user.signUp(ApiUserSignupRequest(username, password))
     }
 }

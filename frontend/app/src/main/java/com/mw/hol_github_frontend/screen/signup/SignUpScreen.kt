@@ -48,6 +48,7 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = SignUpViewModel(apiClient),
     focusManager: FocusManager = LocalFocusManager.current,
     navigateToSignIn: () -> Unit,
+    onSignUp: () -> Unit,
 ) {
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -55,6 +56,17 @@ fun SignUpScreen(
 
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     var repeatedPasswordVisible by rememberSaveable { mutableStateOf(false) }
+
+    fun signUp() {
+        viewModel.viewModelScope.launch {
+            val res = viewModel.signUp(username, password, repeatedPassword)
+            if (res.isSuccessful) {
+                onSignUp()
+            } else {
+                TODO("Handle error")
+            }
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -65,7 +77,7 @@ fun SignUpScreen(
             modifier = Modifier.padding(56.dp)
         ) {
             Text(
-                "Sign up",
+                stringResource(R.string.signup_title),
                 style = Typography.headlineLarge,
                 textAlign = TextAlign.Center,
             )
@@ -110,11 +122,7 @@ fun SignUpScreen(
                     isVisible = repeatedPasswordVisible,
                     onVisibilityChange = { repeatedPasswordVisible = it },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        viewModel.viewModelScope.launch {
-                            viewModel.signUp(username, password, repeatedPassword)
-                        }
-                    })
+                    keyboardActions = KeyboardActions(onDone = { signUp() })
                 )
             }
 
@@ -123,15 +131,11 @@ fun SignUpScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Button(
-                    onClick = {
-                        viewModel.viewModelScope.launch {
-                            viewModel.signUp(username, password, repeatedPassword)
-                        }
-                    },
+                    onClick = { signUp() },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        "Sign up",
+                        stringResource(R.string.signup_title),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 5.dp)
                     )
@@ -139,7 +143,7 @@ fun SignUpScreen(
 
                 TextButton(onClick = navigateToSignIn) {
                     Text(
-                        "Already have an account?",
+                        stringResource(R.string.signup_signin_button),
                         textAlign = TextAlign.Center,
                         style = Typography.labelMedium,
                     )
@@ -153,6 +157,9 @@ fun SignUpScreen(
 @Composable
 fun Preview() {
     AppTheme(useDarkTheme = true) {
-        SignUpScreen(apiClient = ApiClient(LocalContext.current), navigateToSignIn = {})
+        SignUpScreen(
+            apiClient = ApiClient(LocalContext.current),
+            navigateToSignIn = {},
+            onSignUp = {})
     }
 }
