@@ -1,4 +1,4 @@
-package com.mw.hol_github_frontend.screen.signin
+package com.mw.hol_github_frontend.screen.auth.signin
 
 import androidx.lifecycle.ViewModel
 import com.mw.hol_github_frontend.api.ApiClient

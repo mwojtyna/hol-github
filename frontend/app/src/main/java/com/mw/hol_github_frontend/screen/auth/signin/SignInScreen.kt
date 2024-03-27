@@ -1,4 +1,4 @@
-package com.mw.hol_github_frontend.screen.signup
+package com.mw.hol_github_frontend.screen.auth.signin
 
 import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
@@ -47,47 +47,32 @@ import com.mw.hol_github_frontend.theme.Typography
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignUpScreen(
+fun SignInScreen(
     apiClient: ApiClient,
-    viewModel: SignUpViewModel = SignUpViewModel(
-        LocalContext.current.applicationContext as Application,
-        apiClient
-    ),
-    navigateToSignIn: () -> Unit,
-    onSignUp: () -> Unit,
+    viewModel: SignInViewModel = SignInViewModel(apiClient),
+    navigateToSignUp: () -> Unit,
+    onSignIn: () -> Unit,
 ) {
     val username by viewModel.username.collectAsState()
-    val usernameError by viewModel.usernameError.collectAsState()
-
     val password by viewModel.password.collectAsState()
-    val passwordError by viewModel.passwordError.collectAsState()
-
-    val repeatedPassword by viewModel.repeatedPassword.collectAsState()
-    val repeatedPasswordError by viewModel.repeatedPasswordError.collectAsState()
-
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var repeatedPasswordVisible by rememberSaveable { mutableStateOf(false) }
     var loading by rememberSaveable { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
     val errorSnackbar = LocalErrorSnackbar.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    fun signUp() {
+    fun signIn() {
         viewModel.viewModelScope.launch {
-            if (!viewModel.validate()) {
-                return@launch
-            }
-
             loading = true
-            val res = viewModel.signUp(username, password)
+            val res = viewModel.signIn(username, password)
             loading = false
 
             if (res.isSuccessful) {
-                onSignUp()
-            } else if (res.code() == 409) {
-                errorSnackbar.showSnackbar(context.getString(R.string.signup_error))
+                onSignIn()
+            } else {
+                errorSnackbar.showSnackbar(context.getString(R.string.signin_error))
             }
         }
     }
@@ -101,7 +86,7 @@ fun SignUpScreen(
             modifier = Modifier.padding(56.dp)
         ) {
             Text(
-                stringResource(R.string.signup_title),
+                stringResource(R.string.signin_title),
                 style = Typography.headlineLarge,
                 textAlign = TextAlign.Center,
             )
@@ -113,18 +98,11 @@ fun SignUpScreen(
                 OutlinedTextField(
                     value = username,
                     onValueChange = { viewModel.setUsername(it) },
-                    label = { Text(stringResource(R.string.signup_username_label)) },
-                    supportingText = fun(): @Composable (() -> Unit)? {
-                        return if (usernameError.isNotBlank()) {
-                            { Text(usernameError) }
-                        } else {
-                            null
-                        }
-                    }(),
+                    label = { Text(stringResource(R.string.signin_username_label)) },
                     leadingIcon = {
                         Icon(
                             Icons.Outlined.AccountCircle,
-                            stringResource(R.string.signup_username_label)
+                            stringResource(R.string.signin_username_label)
                         )
                     },
                     singleLine = true,
@@ -137,28 +115,14 @@ fun SignUpScreen(
                 PasswordField(
                     password = password,
                     onPasswordChange = viewModel::setPassword,
-                    label = stringResource(R.string.signup_password_label),
-                    supportingText = passwordError,
+                    label = stringResource(R.string.signin_password_label),
                     isVisible = passwordVisible,
                     onVisibilityChange = { passwordVisible = it },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                )
-
-                PasswordField(
-                    password = repeatedPassword,
-                    onPasswordChange = viewModel::setRepeatedPassword,
-                    label = stringResource(R.string.signup_repeated_password_label),
-                    supportingText = repeatedPasswordError,
-                    isVisible = repeatedPasswordVisible,
-                    onVisibilityChange = { repeatedPasswordVisible = it },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        signUp()
+                        signIn()
                         keyboardController?.hide()
-                    })
+                    }),
                 )
             }
 
@@ -167,7 +131,7 @@ fun SignUpScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Button(
-                    onClick = { signUp() },
+                    onClick = { signIn() },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
@@ -177,7 +141,7 @@ fun SignUpScreen(
                         ),
                     ) {
                         Text(
-                            stringResource(R.string.signup_title),
+                            stringResource(R.string.signin_button),
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(vertical = 5.dp)
                         )
@@ -188,9 +152,9 @@ fun SignUpScreen(
                     }
                 }
 
-                TextButton(onClick = navigateToSignIn) {
+                TextButton(onClick = navigateToSignUp) {
                     Text(
-                        stringResource(R.string.signup_signin_button),
+                        stringResource(R.string.signin_signup_button),
                         textAlign = TextAlign.Center,
                         style = Typography.labelMedium,
                     )
@@ -204,8 +168,8 @@ fun SignUpScreen(
 @Composable
 fun Preview() {
     AppTheme(useDarkTheme = true) {
-        SignUpScreen(apiClient = ApiClient(LocalContext.current),
-            navigateToSignIn = {},
-            onSignUp = {})
+        SignInScreen(apiClient = ApiClient(LocalContext.current.applicationContext as Application),
+            navigateToSignUp = {},
+            onSignIn = {})
     }
 }

@@ -1,5 +1,6 @@
 package com.mw.hol_github_frontend.api
 
+import android.app.Application
 import android.content.Context
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
@@ -21,10 +22,11 @@ import java.net.CookieStore
 import java.net.HttpCookie
 import java.net.URI
 
-class RetrofitClient(context: Context) {
+object RetrofitClient {
+    lateinit var app: Application
     val retrofit: Retrofit by lazy {
         val cookieManager = CookieManager(
-            PersistentCookieStore(context), CookiePolicy.ACCEPT_ORIGINAL_SERVER
+            PersistentCookieStore(app), CookiePolicy.ACCEPT_ORIGINAL_SERVER
         )
         val client = OkHttpClient.Builder().cookieJar(JavaNetCookieJar(cookieManager)).build()
 
@@ -34,12 +36,11 @@ class RetrofitClient(context: Context) {
 }
 
 class ApiClient(
-    context: Context,
+    app: Application,
 ) {
-    private val retrofitClient: RetrofitClient = RetrofitClient(context)
-
     val user: UserApi by lazy {
-        retrofitClient.retrofit.create(UserApi::class.java)
+        RetrofitClient.app = app.applicationContext as Application
+        RetrofitClient.retrofit.create(UserApi::class.java)
     }
 }
 

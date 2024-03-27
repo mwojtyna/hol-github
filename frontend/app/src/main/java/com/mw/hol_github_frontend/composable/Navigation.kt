@@ -1,27 +1,29 @@
 package com.mw.hol_github_frontend.composable
 
+import android.app.Application
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.mw.hol_github_frontend.api.ApiClient
-import com.mw.hol_github_frontend.screen.main.MainScreen
-import com.mw.hol_github_frontend.screen.signin.SignInScreen
-import com.mw.hol_github_frontend.screen.signup.SignUpScreen
+import com.mw.hol_github_frontend.screen.auth.signin.SignInScreen
+import com.mw.hol_github_frontend.screen.auth.signup.SignUpScreen
+import com.mw.hol_github_frontend.screen.main.UserScreen
 
 const val DURATION = 300
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    val apiClient = ApiClient(LocalContext.current)
+    val apiClient = ApiClient(LocalContext.current.applicationContext as Application)
 
     NavHost(
         navController = navController,
-        startDestination = "signin",
+        startDestination = "auth",
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Left,
@@ -47,21 +49,26 @@ fun Navigation() {
             )
         },
     ) {
-        composable("signup") {
-            SignUpScreen(apiClient = apiClient,
-                navigateToSignIn = { navController.navigate("signin") },
-                onSignUp = { navController.navigate("main") }
-            )
+        navigation(route = "auth", startDestination = "signin") {
+            composable("signup") {
+                SignUpScreen(apiClient = apiClient,
+                    navigateToSignIn = { navController.navigate("signin") },
+                    onSignUp = { navController.navigate("main") }
+                )
+            }
+            composable("signin") {
+                SignInScreen(
+                    apiClient = apiClient,
+                    navigateToSignUp = { navController.navigate("signup") },
+                    onSignIn = { navController.navigate("main") }
+                )
+            }
         }
-        composable("signin") {
-            SignInScreen(
-                apiClient = apiClient,
-                navigateToSignUp = { navController.navigate("signup") },
-                onSignIn = { navController.navigate("main") }
-            )
-        }
-        composable("main") {
-            MainScreen()
+
+        navigation(route = "main", startDestination = "user") {
+            composable("user") {
+                UserScreen()
+            }
         }
     }
 }
