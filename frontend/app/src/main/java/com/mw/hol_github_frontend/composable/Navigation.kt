@@ -1,6 +1,8 @@
 package com.mw.hol_github_frontend.composable
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -20,6 +22,15 @@ const val DURATION = 300
 fun Navigation() {
     val navController = rememberNavController()
     val apiClient = ApiClient(LocalContext.current.applicationContext as Application)
+
+    fun afterAuth() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        val runnable = Runnable {
+            navController.popBackStack("auth", inclusive = true)
+            navController.navigate("main")
+        }
+        mainHandler.post(runnable)
+    }
 
     NavHost(
         navController = navController,
@@ -53,20 +64,14 @@ fun Navigation() {
             composable("signup") {
                 SignUpScreen(apiClient = apiClient,
                     navigateToSignIn = { navController.navigate("signin") },
-                    onSignUp = {
-                        navController.popBackStack("auth", inclusive = true)
-                        navController.navigate("main")
-                    }
+                    onSignUp = { afterAuth() }
                 )
             }
             composable("signin") {
                 SignInScreen(
                     apiClient = apiClient,
                     navigateToSignUp = { navController.navigate("signup") },
-                    onSignIn = {
-                        navController.popBackStack("auth", inclusive = true)
-                        navController.navigate("main")
-                    }
+                    onSignIn = { afterAuth() }
                 )
             }
         }
