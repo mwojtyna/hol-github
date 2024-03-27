@@ -7,6 +7,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import com.google.protobuf.InvalidProtocolBufferException
+import com.mw.hol_github_frontend.BuildConfig
 import com.mw.hol_github_frontend.proto.PersistentCookie
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -30,7 +31,7 @@ object RetrofitClient {
         )
         val client = OkHttpClient.Builder().cookieJar(JavaNetCookieJar(cookieManager)).build()
 
-        Retrofit.Builder().baseUrl("http://10.0.2.2:3000/api/")
+        Retrofit.Builder().baseUrl(BuildConfig.API_URL)
             .addConverterFactory(GsonConverterFactory.create()).client(client).build()
     }
 }

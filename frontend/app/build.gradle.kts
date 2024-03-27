@@ -1,3 +1,13 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+val envProperties = Properties().apply {
+    val envFile = rootProject.file(".env")
+    if (envFile.exists()) {
+        load(FileInputStream(envFile))
+    }
+}
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -19,6 +29,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val apiUrl = envProperties.getProperty("API_URL") ?: "\"\""
+        buildConfigField("String", "API_URL", apiUrl)
     }
 
     buildTypes {
@@ -38,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
