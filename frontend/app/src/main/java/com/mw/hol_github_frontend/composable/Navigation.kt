@@ -53,14 +53,20 @@ fun Navigation() {
             composable("signup") {
                 SignUpScreen(apiClient = apiClient,
                     navigateToSignIn = { navController.navigate("signin") },
-                    onSignUp = { navController.navigate("main") }
+                    onSignUp = {
+                        navController.popBackStack("auth", inclusive = true)
+                        navController.navigate("main")
+                    }
                 )
             }
             composable("signin") {
                 SignInScreen(
                     apiClient = apiClient,
                     navigateToSignUp = { navController.navigate("signup") },
-                    onSignIn = { navController.navigate("main") }
+                    onSignIn = {
+                        navController.popBackStack("auth", inclusive = true)
+                        navController.navigate("main")
+                    }
                 )
             }
         }

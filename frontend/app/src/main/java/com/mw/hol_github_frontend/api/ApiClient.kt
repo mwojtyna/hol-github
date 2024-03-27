@@ -30,7 +30,7 @@ object RetrofitClient {
         )
         val client = OkHttpClient.Builder().cookieJar(JavaNetCookieJar(cookieManager)).build()
 
-        Retrofit.Builder().baseUrl("http://10.0.2.2:3000/api/")
+        Retrofit.Builder().baseUrl("http://192.168.0.106:3000/api/")
             .addConverterFactory(GsonConverterFactory.create()).client(client).build()
     }
 }
