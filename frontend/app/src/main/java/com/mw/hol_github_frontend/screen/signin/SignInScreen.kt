@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -59,6 +60,7 @@ fun SignInScreen(
     val focusManager = LocalFocusManager.current
     val errorSnackbar = LocalErrorSnackbar.current
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     fun signIn() {
         viewModel.viewModelScope.launch {
@@ -75,8 +77,7 @@ fun SignInScreen(
     }
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
@@ -117,7 +118,10 @@ fun SignInScreen(
                     isVisible = passwordVisible,
                     onVisibilityChange = { passwordVisible = it },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { signIn() }),
+                    keyboardActions = KeyboardActions(onDone = {
+                        signIn()
+                        keyboardController?.hide()
+                    }),
                 )
             }
 

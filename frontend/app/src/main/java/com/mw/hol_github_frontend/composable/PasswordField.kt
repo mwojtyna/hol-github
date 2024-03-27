@@ -22,15 +22,22 @@ fun PasswordField(
     password: String,
     onPasswordChange: (String) -> Unit,
     label: String,
+    supportingText: String? = null,
     isVisible: Boolean,
     onVisibilityChange: (Boolean) -> Unit,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
+    val supportingTextComp: @Composable (() -> Unit)? =
+        if (!supportingText.isNullOrBlank()) {
+            { Text(supportingText) }
+        } else null
+
     OutlinedTextField(
         value = password,
         onValueChange = { onPasswordChange(it) },
         label = { Text(label) },
+        supportingText = supportingTextComp,
         leadingIcon = {
             Icon(
                 Icons.Outlined.Lock,
@@ -39,7 +46,6 @@ fun PasswordField(
         },
         trailingIcon = {
             val image = if (!isVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-
             IconButton(onClick = { onVisibilityChange(!isVisible) }) {
                 Icon(
                     imageVector = image, stringResource(R.string.passwordfield_password_visibility)
