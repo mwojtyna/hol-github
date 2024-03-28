@@ -1,14 +1,14 @@
 _type: export
 __export_format: 4
-__export_date: 2024-03-21T19:03:19.175Z
+__export_date: 2024-03-28T02:59:20.750Z
 __export_source: insomnia.desktop.app:v0.2.3-a
 resources:
   - _id: req_06bcb506b6384e9d97e54fafd4a196a6
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710789563732
+    parentId: fld_f4eefce54d1040c4918383791fca8997
+    modified: 1711594166628
     created: 1710287069355
     url: http://localhost:3000/api/user/signup
-    name: user/signup
+    name: signup
     description: ""
     method: POST
     body:
@@ -25,7 +25,7 @@ resources:
       - name: User-Agent
         value: insomnium/0.2.3-a
     authentication: {}
-    metaSortKey: -1710287069354
+    metaSortKey: -1711594153344
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -35,6 +35,16 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
+  - _id: fld_f4eefce54d1040c4918383791fca8997
+    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
+    modified: 1711594150510
+    created: 1711594150510
+    name: user
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1711594150510
+    _type: request_group
   - _id: wrk_9e2020fab60c498c869d8ed7c25aacee
     parentId: null
     modified: 1710448258326
@@ -44,11 +54,11 @@ resources:
     scope: collection
     _type: workspace
   - _id: req_64ea65a5def749b1b6f8777ad45876fe
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710789566175
+    parentId: fld_f4eefce54d1040c4918383791fca8997
+    modified: 1711594171523
     created: 1710289066946
     url: http://localhost:3000/api/user/signin
-    name: user/signin
+    name: signin
     description: ""
     method: POST
     body:
@@ -65,7 +75,7 @@ resources:
       - name: User-Agent
         value: insomnium/0.2.3-a
     authentication: {}
-    metaSortKey: -1710287069304
+    metaSortKey: -1711594153244
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -76,11 +86,11 @@ resources:
     segmentParams: []
     _type: request
   - _id: req_a33cbac8062544eb918462eafbcae93a
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710789090601
+    parentId: fld_f4eefce54d1040c4918383791fca8997
+    modified: 1711594176724
     created: 1710287220315
     url: http://localhost:3000/api/user/signout
-    name: user/signout
+    name: signout
     description: ""
     method: POST
     body: {}
@@ -89,7 +99,31 @@ resources:
       - name: User-Agent
         value: insomnium/0.2.3-a
     authentication: {}
-    metaSortKey: -1710287069254
+    metaSortKey: -1711594153144
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    segmentParams: []
+    _type: request
+  - _id: req_d26daff3040d45519e2d73b74abce958
+    parentId: fld_f4eefce54d1040c4918383791fca8997
+    modified: 1711594363584
+    created: 1711594256090
+    url: http://localhost:3000/api/user/me
+    name: me
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnium/0.2.3-a
+    authentication: {}
+    metaSortKey: -1711594153094
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -100,11 +134,11 @@ resources:
     segmentParams: []
     _type: request
   - _id: req_ec7c97b5df5c4f3dbdd6a09ae82cfe55
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710774849086
+    parentId: fld_dc0181d8124340ddaa64bc41b15cf09a
+    modified: 1711594203145
     created: 1710774740707
     url: http://localhost:3000/api/game/new
-    name: game/new
+    name: new
     description: ""
     method: POST
     body: {}
@@ -113,7 +147,7 @@ resources:
       - name: User-Agent
         value: insomnium/0.2.3-a
     authentication: {}
-    metaSortKey: -1710287069154
+    metaSortKey: -1711594196976
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -123,12 +157,22 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: req_82554d85234f4d66a5f427316bf929f4
+  - _id: fld_dc0181d8124340ddaa64bc41b15cf09a
     parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1710806311313
+    modified: 1711594193262
+    created: 1711594181114
+    name: game
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1710287069004
+    _type: request_group
+  - _id: req_82554d85234f4d66a5f427316bf929f4
+    parentId: fld_dc0181d8124340ddaa64bc41b15cf09a
+    modified: 1711594206270
     created: 1710789580705
     url: http://localhost:3000/api/game/choose
-    name: game/choose
+    name: choose
     description: ""
     method: POST
     body:
@@ -144,7 +188,7 @@ resources:
       - name: User-Agent
         value: insomnium/0.2.3-a
     authentication: {}
-    metaSortKey: -1710287069104
+    metaSortKey: -1711594196876
     isPrivate: false
     settingStoreCookies: true
     settingSendCookies: true
@@ -167,21 +211,20 @@ resources:
     _type: environment
   - _id: jar_826c4a2ed7a042e1bcd84fc411c96e4f
     parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1711047504105
+    modified: 1711594292599
     created: 1710292466489
     name: Default Jar
     cookies:
       - key: SESSION_ID
-        value: 0ebc218e-fba9-4d4c-a252-50ba184c539f
-        expires: 2024-03-28T18:58:24.000Z
+        value: add7d63f-6c73-4791-a6a1-618f067ca58f
+        expires: 2024-04-04T02:51:32.000Z
         maxAge: 604800
         domain: localhost
         path: /api
-        secure: true
         httpOnly: true
         hostOnly: true
         creation: 2024-03-15T15:55:48.760Z
-        lastAccessed: 2024-03-21T18:58:24.105Z
+        lastAccessed: 2024-03-28T02:51:32.599Z
         sameSite: strict
-        id: "8717515953791835"
+        id: "3975497070134517"
     _type: cookie_jar
