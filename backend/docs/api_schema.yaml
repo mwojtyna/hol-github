@@ -136,3 +136,19 @@ paths:
           description: OK
         401:
           description: User not logged in
+
+  /api/user/me:
+    get:
+      summary: Get current user's information
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+        401:
+          description: User not logged in

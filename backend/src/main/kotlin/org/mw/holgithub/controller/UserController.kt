@@ -4,6 +4,7 @@ import com.sun.net.httpserver.Authenticator.Success
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import org.mw.holgithub.dto.ApiUserProfileGetResponse
 import org.mw.holgithub.dto.ApiUserSigninPostRequest
 import org.mw.holgithub.dto.ApiUserSignupPostRequest
 import org.mw.holgithub.dto.AuthDto
@@ -11,10 +12,7 @@ import org.mw.holgithub.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/user")
@@ -48,5 +46,10 @@ class UserController(
         @AuthenticationPrincipal auth: AuthDto,
     ) {
         service.signOut(request, response, auth)
+    }
+
+    @GetMapping("/me")
+    fun me(@AuthenticationPrincipal auth: AuthDto): ApiUserProfileGetResponse {
+        return ApiUserProfileGetResponse(auth.user.username)
     }
 }
