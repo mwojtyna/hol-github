@@ -1,6 +1,5 @@
 package com.mw.hol_github_frontend.screen.auth.signup
 
-import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.mw.hol_github_frontend.LocalErrorSnackbar
 import com.mw.hol_github_frontend.R
@@ -48,11 +48,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
-    apiClient: ApiClient,
-    viewModel: SignUpViewModel = SignUpViewModel(
-        LocalContext.current.applicationContext as Application,
-        apiClient
-    ),
+    viewModel: SignUpViewModel = hiltViewModel(),
     navigateToSignIn: () -> Unit,
     onSignUp: () -> Unit,
 ) {
@@ -203,8 +199,14 @@ fun SignUpScreen(
 @Preview
 @Composable
 fun Preview() {
+    val context = LocalContext.current
+
     AppTheme(useDarkTheme = true) {
-        SignUpScreen(apiClient = ApiClient(LocalContext.current.applicationContext as Application),
+        SignUpScreen(
+            viewModel = SignUpViewModel(
+                context = context,
+                apiClient = ApiClient(context)
+            ),
             navigateToSignIn = {},
             onSignUp = {})
     }

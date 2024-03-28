@@ -18,5 +18,7 @@
     <string name="signin_signup_button">Don\'t have an account yet?</string>
     <string name="signin_error">Sign in failed</string>
 
+    <string name="user_signout_button">Sign out</string>
+
     <string name="passwordfield_password_visibility">Toggle password visibility</string>
 </resources>

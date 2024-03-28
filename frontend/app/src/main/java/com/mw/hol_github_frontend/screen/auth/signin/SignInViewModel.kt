@@ -3,10 +3,13 @@ package com.mw.hol_github_frontend.screen.auth.signin
 import androidx.lifecycle.ViewModel
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.api.ApiUserSigninRequest
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.Response
+import javax.inject.Inject
 
-class SignInViewModel(private val apiClient: ApiClient) : ViewModel() {
+@HiltViewModel
+class SignInViewModel @Inject constructor(private val apiClient: ApiClient) : ViewModel() {
     val username = MutableStateFlow("")
     fun setUsername(username: String) {
         this.username.value = username

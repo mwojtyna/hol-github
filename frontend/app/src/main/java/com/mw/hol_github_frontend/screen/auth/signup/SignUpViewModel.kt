@@ -1,17 +1,21 @@
 package com.mw.hol_github_frontend.screen.auth.signup
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
+import androidx.lifecycle.ViewModel
 import com.mw.hol_github_frontend.R
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.api.ApiUserSignupRequest
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.Response
+import javax.inject.Inject
 
-class SignUpViewModel(
-    private val app: Application,
+@HiltViewModel
+class SignUpViewModel @Inject constructor(
+    @field:ApplicationContext private val context: Context,
     private val apiClient: ApiClient,
-) : AndroidViewModel(app) {
+) : ViewModel() {
     companion object {
         private val PASSWORD_REGEX =
             "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d\\w\\W]{8,}\$".toRegex()
@@ -56,7 +60,7 @@ class SignUpViewModel(
 
     private fun validateUsername(): Boolean {
         return if (username.value.isBlank()) {
-            usernameError.value = app.getString(R.string.signup_username_error)
+            usernameError.value = context.getString(R.string.signup_username_error)
             false
         } else {
             usernameError.value = ""
@@ -66,7 +70,7 @@ class SignUpViewModel(
 
     private fun validatePassword(): Boolean {
         return if (!PASSWORD_REGEX.matches(password.value)) {
-            passwordError.value = app.getString(R.string.signup_password_error)
+            passwordError.value = context.getString(R.string.signup_password_error)
             false
         } else {
             passwordError.value = ""
@@ -77,7 +81,7 @@ class SignUpViewModel(
     private fun validateRepeatedPassword(): Boolean {
         return if (password.value != repeatedPassword.value) {
             repeatedPasswordError.value =
-                app.getString(R.string.signup_repeated_password_error)
+                context.getString(R.string.signup_repeated_password_error)
             false
         } else {
             repeatedPasswordError.value = ""

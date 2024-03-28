@@ -1,12 +1,12 @@
 package com.mw.hol_github_frontend.composable
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -15,7 +15,9 @@ import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.screen.auth.signin.SignInScreen
 import com.mw.hol_github_frontend.screen.auth.signup.SignUpScreen
 import com.mw.hol_github_frontend.screen.main.user.UserScreen
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 const val DURATION = 300
 
@@ -28,9 +30,11 @@ fun onMainThread(cb: () -> Unit) {
 }
 
 @Composable
-fun Navigation() {
+fun Navigation(
+    viewModel: NavigationViewModel = hiltViewModel(),
+) {
     val navController = rememberNavController()
-    val apiClient = ApiClient(LocalContext.current.applicationContext as Application)
+    val apiClient = viewModel.apiClient
 
     fun afterAuth() {
         onMainThread {
@@ -67,12 +71,12 @@ fun Navigation() {
     ) {
         navigation(route = "auth", startDestination = "signin") {
             composable("signup") {
-                SignUpScreen(apiClient = apiClient,
+                SignUpScreen(
                     navigateToSignIn = { onMainThread { navController.navigate("signin") } },
                     onSignUp = { afterAuth() })
             }
             composable("signin") {
-                SignInScreen(apiClient = apiClient,
+                SignInScreen(
                     navigateToSignUp = { onMainThread { navController.navigate("signup") } },
                     onSignIn = { afterAuth() })
             }
@@ -80,7 +84,7 @@ fun Navigation() {
 
         navigation(route = "main", startDestination = "user") {
             composable("user") {
-                UserScreen(apiClient = apiClient, navigateToSignIn = {
+                UserScreen(navigateToSignIn = {
                     onMainThread {
                         navController.popBackStack("main", inclusive = true)
                         navController.navigate("auth")
@@ -90,3 +94,6 @@ fun Navigation() {
         }
     }
 }
+
+@HiltViewModel
+class NavigationViewModel @Inject constructor(val apiClient: ApiClient) : ViewModel()

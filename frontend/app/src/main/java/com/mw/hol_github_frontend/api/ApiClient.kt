@@ -1,6 +1,5 @@
 package com.mw.hol_github_frontend.api
 
-import android.app.Application
 import android.content.Context
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.DataStore
@@ -9,6 +8,7 @@ import androidx.datastore.dataStore
 import com.google.protobuf.InvalidProtocolBufferException
 import com.mw.hol_github_frontend.BuildConfig
 import com.mw.hol_github_frontend.proto.PersistentCookie
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.JavaNetCookieJar
@@ -23,11 +23,10 @@ import java.net.CookieStore
 import java.net.HttpCookie
 import java.net.URI
 
-object RetrofitClient {
-    lateinit var app: Application
+class RetrofitClient(private val context: Context) {
     val retrofit: Retrofit by lazy {
         val cookieManager = CookieManager(
-            PersistentCookieStore(app), CookiePolicy.ACCEPT_ORIGINAL_SERVER
+            PersistentCookieStore(context), CookiePolicy.ACCEPT_ORIGINAL_SERVER
         )
         val client = OkHttpClient.Builder().cookieJar(JavaNetCookieJar(cookieManager)).build()
 
@@ -36,12 +35,11 @@ object RetrofitClient {
     }
 }
 
-class ApiClient(
-    app: Application,
-) {
+class ApiClient(@ApplicationContext context: Context) {
+    private val client = RetrofitClient(context)
+
     val user: UserApi by lazy {
-        RetrofitClient.app = app.applicationContext as Application
-        RetrofitClient.retrofit.create(UserApi::class.java)
+        client.retrofit.create(UserApi::class.java)
     }
 }
 
@@ -73,7 +71,7 @@ class PersistentCookieStore(private val context: Context) : CookieStore {
         runBlocking {
             context.cookieDataStore.updateData {
                 if (!cookie.hasExpired()) {
-                    return@updateData PersistentCookie.newBuilder()
+                    PersistentCookie.newBuilder()
                         .apply {
                             name = cookie.name
                             value = cookie.value
@@ -84,7 +82,7 @@ class PersistentCookieStore(private val context: Context) : CookieStore {
                             maxAge = cookie.maxAge
                         }.build()
                 } else {
-                    return@updateData null
+                    null
                 }
             }
         }

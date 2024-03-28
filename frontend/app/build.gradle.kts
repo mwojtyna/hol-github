@@ -12,6 +12,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.protobuf") version "0.9.4"
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -85,6 +87,9 @@ dependencies {
     implementation(libs.protobuf.javalite.v3201)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation("androidx.navigation:navigation-compose")
+    implementation(libs.hilt.android.v248)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler.v248)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
@@ -105,4 +110,9 @@ protobuf {
             }
         }
     }
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
