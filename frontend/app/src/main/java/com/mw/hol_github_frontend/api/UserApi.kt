@@ -2,6 +2,7 @@ package com.mw.hol_github_frontend.api
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface UserApi {
@@ -17,4 +18,7 @@ interface UserApi {
 
     @POST("user/signout")
     suspend fun signOut(): Response<Unit>
+
+    @GET("user/me")
+    suspend fun me(): Response<ApiUserMeResponse>
 }

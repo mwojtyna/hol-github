@@ -14,9 +14,18 @@ import androidx.navigation.compose.rememberNavController
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.screen.auth.signin.SignInScreen
 import com.mw.hol_github_frontend.screen.auth.signup.SignUpScreen
-import com.mw.hol_github_frontend.screen.main.UserScreen
+import com.mw.hol_github_frontend.screen.main.user.UserScreen
+import kotlinx.coroutines.runBlocking
 
 const val DURATION = 300
+
+fun onMainThread(cb: () -> Unit) {
+    val mainHandler = Handler(Looper.getMainLooper())
+    val runnable = Runnable {
+        cb()
+    }
+    mainHandler.post(runnable)
+}
 
 @Composable
 fun Navigation() {
@@ -24,61 +33,59 @@ fun Navigation() {
     val apiClient = ApiClient(LocalContext.current.applicationContext as Application)
 
     fun afterAuth() {
-        val mainHandler = Handler(Looper.getMainLooper())
-        val runnable = Runnable {
+        onMainThread {
             navController.popBackStack("auth", inclusive = true)
             navController.navigate("main")
         }
-        mainHandler.post(runnable)
     }
 
     NavHost(
         navController = navController,
-        startDestination = "auth",
+        startDestination = runBlocking {
+            if (apiClient.user.me().isSuccessful) "main" else "auth"
+        },
         enterTransition = {
             slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                tween(DURATION)
+                AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                tween(DURATION)
+                AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
             )
         },
         popEnterTransition = {
             slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right,
-                tween(DURATION)
+                AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
             )
         },
         popExitTransition = {
             slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right,
-                tween(DURATION)
+                AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
             )
         },
     ) {
         navigation(route = "auth", startDestination = "signin") {
             composable("signup") {
                 SignUpScreen(apiClient = apiClient,
-                    navigateToSignIn = { navController.navigate("signin") },
-                    onSignUp = { afterAuth() }
-                )
+                    navigateToSignIn = { onMainThread { navController.navigate("signin") } },
+                    onSignUp = { afterAuth() })
             }
             composable("signin") {
-                SignInScreen(
-                    apiClient = apiClient,
-                    navigateToSignUp = { navController.navigate("signup") },
-                    onSignIn = { afterAuth() }
-                )
+                SignInScreen(apiClient = apiClient,
+                    navigateToSignUp = { onMainThread { navController.navigate("signup") } },
+                    onSignIn = { afterAuth() })
             }
         }
 
         navigation(route = "main", startDestination = "user") {
             composable("user") {
-                UserScreen()
+                UserScreen(apiClient = apiClient, navigateToSignIn = {
+                    onMainThread {
+                        navController.popBackStack("main", inclusive = true)
+                        navController.navigate("auth")
+                    }
+                })
             }
         }
     }
