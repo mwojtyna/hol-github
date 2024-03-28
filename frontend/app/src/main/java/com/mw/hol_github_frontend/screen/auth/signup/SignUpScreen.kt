@@ -40,6 +40,7 @@ import androidx.lifecycle.viewModelScope
 import com.mw.hol_github_frontend.LocalErrorSnackbar
 import com.mw.hol_github_frontend.R
 import com.mw.hol_github_frontend.api.ApiClient
+import com.mw.hol_github_frontend.composable.AppScaffold
 import com.mw.hol_github_frontend.composable.PasswordField
 import com.mw.hol_github_frontend.composable.Spinner
 import com.mw.hol_github_frontend.theme.AppTheme
@@ -88,108 +89,110 @@ fun SignUpScreen(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(56.dp)
+    AppScaffold {
+        Surface(
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
-            Text(
-                stringResource(R.string.signup_title),
-                style = Typography.headlineLarge,
-                textAlign = TextAlign.Center,
-            )
-
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(56.dp)
             ) {
-                OutlinedTextField(
-                    value = username,
-                    onValueChange = { viewModel.setUsername(it) },
-                    label = { Text(stringResource(R.string.signup_username_label)) },
-                    supportingText = fun(): @Composable (() -> Unit)? {
-                        return if (usernameError.isNotBlank()) {
-                            { Text(usernameError) }
-                        } else {
-                            null
-                        }
-                    }(),
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.AccountCircle,
-                            stringResource(R.string.signup_username_label)
-                        )
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
+                Text(
+                    stringResource(R.string.signup_title),
+                    style = Typography.headlineLarge,
+                    textAlign = TextAlign.Center,
                 )
 
-                PasswordField(
-                    password = password,
-                    onPasswordChange = viewModel::setPassword,
-                    label = stringResource(R.string.signup_password_label),
-                    supportingText = passwordError,
-                    isVisible = passwordVisible,
-                    onVisibilityChange = { passwordVisible = it },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                )
-
-                PasswordField(
-                    password = repeatedPassword,
-                    onPasswordChange = viewModel::setRepeatedPassword,
-                    label = stringResource(R.string.signup_repeated_password_label),
-                    supportingText = repeatedPasswordError,
-                    isVisible = repeatedPasswordVisible,
-                    onVisibilityChange = { repeatedPasswordVisible = it },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        signUp()
-                        keyboardController?.hide()
-                    })
-                )
-            }
-
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Button(
-                    onClick = { signUp() },
-                    modifier = Modifier.fillMaxWidth(),
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(
-                            10.dp, Alignment.CenterHorizontally
-                        ),
-                    ) {
-                        Text(
-                            stringResource(R.string.signup_title),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(vertical = 5.dp)
-                        )
+                    OutlinedTextField(
+                        value = username,
+                        onValueChange = { viewModel.setUsername(it) },
+                        label = { Text(stringResource(R.string.signup_username_label)) },
+                        supportingText = fun(): @Composable (() -> Unit)? {
+                            return if (usernameError.isNotBlank()) {
+                                { Text(usernameError) }
+                            } else {
+                                null
+                            }
+                        }(),
+                        leadingIcon = {
+                            Icon(
+                                Icons.Outlined.AccountCircle,
+                                stringResource(R.string.signup_username_label)
+                            )
+                        },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }),
+                    )
 
-                        if (loading) {
-                            Spinner()
-                        }
-                    }
+                    PasswordField(
+                        password = password,
+                        onPasswordChange = viewModel::setPassword,
+                        label = stringResource(R.string.signup_password_label),
+                        supportingText = passwordError,
+                        isVisible = passwordVisible,
+                        onVisibilityChange = { passwordVisible = it },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }),
+                    )
+
+                    PasswordField(
+                        password = repeatedPassword,
+                        onPasswordChange = viewModel::setRepeatedPassword,
+                        label = stringResource(R.string.signup_repeated_password_label),
+                        supportingText = repeatedPasswordError,
+                        isVisible = repeatedPasswordVisible,
+                        onVisibilityChange = { repeatedPasswordVisible = it },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            signUp()
+                            keyboardController?.hide()
+                        })
+                    )
                 }
 
-                TextButton(onClick = navigateToSignIn) {
-                    Text(
-                        stringResource(R.string.signup_signin_button),
-                        textAlign = TextAlign.Center,
-                        style = Typography.labelMedium,
-                    )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Button(
+                        onClick = { signUp() },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(
+                                10.dp, Alignment.CenterHorizontally
+                            ),
+                        ) {
+                            Text(
+                                stringResource(R.string.signup_title),
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 5.dp)
+                            )
+
+                            if (loading) {
+                                Spinner()
+                            }
+                        }
+                    }
+
+                    TextButton(onClick = navigateToSignIn) {
+                        Text(
+                            stringResource(R.string.signup_signin_button),
+                            textAlign = TextAlign.Center,
+                            style = Typography.labelMedium,
+                        )
+                    }
                 }
             }
         }
@@ -202,12 +205,8 @@ fun Preview() {
     val context = LocalContext.current
 
     AppTheme(useDarkTheme = true) {
-        SignUpScreen(
-            viewModel = SignUpViewModel(
-                context = context,
-                apiClient = ApiClient(context)
-            ),
-            navigateToSignIn = {},
-            onSignUp = {})
+        SignUpScreen(viewModel = SignUpViewModel(
+            context = context, apiClient = ApiClient(context)
+        ), navigateToSignIn = {}, onSignUp = {})
     }
 }

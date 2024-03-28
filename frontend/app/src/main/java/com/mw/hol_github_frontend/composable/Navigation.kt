@@ -4,16 +4,20 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
+import com.mw.hol_github_frontend.LocalNavController
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.screen.auth.signin.SignInScreen
 import com.mw.hol_github_frontend.screen.auth.signup.SignUpScreen
+import com.mw.hol_github_frontend.screen.main.game.GameScreen
+import com.mw.hol_github_frontend.screen.main.leaderboard.LeaderboardScreen
 import com.mw.hol_github_frontend.screen.main.user.UserScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.runBlocking
@@ -21,19 +25,11 @@ import javax.inject.Inject
 
 const val DURATION = 300
 
-fun onMainThread(cb: () -> Unit) {
-    val mainHandler = Handler(Looper.getMainLooper())
-    val runnable = Runnable {
-        cb()
-    }
-    mainHandler.post(runnable)
-}
-
 @Composable
 fun Navigation(
     viewModel: NavigationViewModel = hiltViewModel(),
 ) {
-    val navController = rememberNavController()
+    val navController = LocalNavController.current
     val apiClient = viewModel.apiClient
 
     fun afterAuth() {
@@ -48,28 +44,30 @@ fun Navigation(
         startDestination = runBlocking {
             if (apiClient.user.me().isSuccessful) "main" else "auth"
         },
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
-            )
-        },
-        popEnterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
-            )
-        },
     ) {
-        navigation(route = "auth", startDestination = "signin") {
+        navigation(
+            route = "auth", startDestination = "signin",
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
+                )
+            },
+        ) {
             composable("signup") {
                 SignUpScreen(
                     navigateToSignIn = { onMainThread { navController.navigate("signin") } },
@@ -82,7 +80,13 @@ fun Navigation(
             }
         }
 
-        navigation(route = "main", startDestination = "user") {
+        navigation(
+            route = "main", startDestination = "game",
+            enterTransition = { fadeIn(tween(DURATION)) },
+            exitTransition = { fadeOut(tween(DURATION)) },
+            popEnterTransition = { fadeIn(tween(DURATION)) },
+            popExitTransition = { fadeOut(tween(DURATION)) },
+        ) {
             composable("user") {
                 UserScreen(navigateToSignIn = {
                     onMainThread {
@@ -91,8 +95,24 @@ fun Navigation(
                     }
                 })
             }
+
+            composable("game") {
+                GameScreen()
+            }
+
+            composable("leaderboard") {
+                LeaderboardScreen()
+            }
         }
     }
+}
+
+private fun onMainThread(cb: () -> Unit) {
+    val mainHandler = Handler(Looper.getMainLooper())
+    val runnable = Runnable {
+        cb()
+    }
+    mainHandler.post(runnable)
 }
 
 @HiltViewModel

@@ -3,7 +3,6 @@ package com.mw.hol_github_frontend
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mw.hol_github_frontend.composable.AppScaffold
 import com.mw.hol_github_frontend.composable.Navigation
 import com.mw.hol_github_frontend.composable.Providers
 import com.mw.hol_github_frontend.theme.AppTheme
@@ -17,9 +16,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 Providers {
-                    AppScaffold {
-                        Navigation()
-                    }
+                    Navigation()
                 }
             }
         }

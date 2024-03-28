@@ -11,18 +11,20 @@ import androidx.compose.ui.Modifier
 import com.mw.hol_github_frontend.LocalErrorSnackbar
 
 @Composable
-fun AppScaffold(children: @Composable () -> Unit) {
+fun AppScaffold(bottomNav: @Composable (() -> Unit) = {}, children: @Composable () -> Unit) {
     val errorSnackbar = LocalErrorSnackbar.current
 
-    Scaffold(snackbarHost = {
-        SnackbarHost(hostState = errorSnackbar) { data ->
-            Snackbar(
-                snackbarData = data,
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.error
-            )
-        }
-    }) { padding ->
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = errorSnackbar) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            }
+        }, bottomBar = bottomNav
+    ) { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             children()
         }

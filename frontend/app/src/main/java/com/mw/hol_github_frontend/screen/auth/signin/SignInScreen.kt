@@ -40,6 +40,7 @@ import androidx.lifecycle.viewModelScope
 import com.mw.hol_github_frontend.LocalErrorSnackbar
 import com.mw.hol_github_frontend.R
 import com.mw.hol_github_frontend.api.ApiClient
+import com.mw.hol_github_frontend.composable.AppScaffold
 import com.mw.hol_github_frontend.composable.PasswordField
 import com.mw.hol_github_frontend.composable.Spinner
 import com.mw.hol_github_frontend.theme.AppTheme
@@ -76,87 +77,89 @@ fun SignInScreen(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(56.dp)
+    AppScaffold {
+        Surface(
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
-            Text(
-                stringResource(R.string.signin_title),
-                style = Typography.headlineLarge,
-                textAlign = TextAlign.Center,
-            )
-
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(56.dp)
             ) {
-                OutlinedTextField(
-                    value = username,
-                    onValueChange = { viewModel.setUsername(it) },
-                    label = { Text(stringResource(R.string.signin_username_label)) },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.AccountCircle,
-                            stringResource(R.string.signin_username_label)
-                        )
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
+                Text(
+                    stringResource(R.string.signin_title),
+                    style = Typography.headlineLarge,
+                    textAlign = TextAlign.Center,
                 )
 
-                PasswordField(
-                    password = password,
-                    onPasswordChange = viewModel::setPassword,
-                    label = stringResource(R.string.signin_password_label),
-                    isVisible = passwordVisible,
-                    onVisibilityChange = { passwordVisible = it },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        signIn()
-                        keyboardController?.hide()
-                    }),
-                )
-            }
-
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Button(
-                    onClick = { signIn() },
-                    modifier = Modifier.fillMaxWidth(),
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(
-                            10.dp, Alignment.CenterHorizontally
-                        ),
-                    ) {
-                        Text(
-                            stringResource(R.string.signin_button),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(vertical = 5.dp)
-                        )
+                    OutlinedTextField(
+                        value = username,
+                        onValueChange = { viewModel.setUsername(it) },
+                        label = { Text(stringResource(R.string.signin_username_label)) },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Outlined.AccountCircle,
+                                stringResource(R.string.signin_username_label)
+                            )
+                        },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }),
+                    )
 
-                        if (loading) {
-                            Spinner()
-                        }
-                    }
+                    PasswordField(
+                        password = password,
+                        onPasswordChange = viewModel::setPassword,
+                        label = stringResource(R.string.signin_password_label),
+                        isVisible = passwordVisible,
+                        onVisibilityChange = { passwordVisible = it },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            signIn()
+                            keyboardController?.hide()
+                        }),
+                    )
                 }
 
-                TextButton(onClick = navigateToSignUp) {
-                    Text(
-                        stringResource(R.string.signin_signup_button),
-                        textAlign = TextAlign.Center,
-                        style = Typography.labelMedium,
-                    )
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Button(
+                        onClick = { signIn() },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(
+                                10.dp, Alignment.CenterHorizontally
+                            ),
+                        ) {
+                            Text(
+                                stringResource(R.string.signin_button),
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 5.dp)
+                            )
+
+                            if (loading) {
+                                Spinner()
+                            }
+                        }
+                    }
+
+                    TextButton(onClick = navigateToSignUp) {
+                        Text(
+                            stringResource(R.string.signin_signup_button),
+                            textAlign = TextAlign.Center,
+                            style = Typography.labelMedium,
+                        )
+                    }
                 }
             }
         }
@@ -167,8 +170,7 @@ fun SignInScreen(
 @Composable
 fun Preview() {
     AppTheme(useDarkTheme = true) {
-        SignInScreen(
-            viewModel = SignInViewModel(ApiClient(LocalContext.current)),
+        SignInScreen(viewModel = SignInViewModel(ApiClient(LocalContext.current)),
             navigateToSignUp = {},
             onSignIn = {})
     }
