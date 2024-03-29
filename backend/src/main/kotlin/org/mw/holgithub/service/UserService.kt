@@ -1,10 +1,14 @@
 package org.mw.holgithub.service
 
+import jakarta.persistence.EntityManager
+import jakarta.persistence.NoResultException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.mw.holgithub.dto.AuthDto
 import org.mw.holgithub.exception.UserAlreadyExistsException
+import org.mw.holgithub.model.GameModel
 import org.mw.holgithub.model.UserModel
+import org.mw.holgithub.repository.GameRepository
 import org.mw.holgithub.repository.UserRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.authentication.BadCredentialsException
@@ -12,12 +16,15 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class UserService(
     private val repository: UserRepository,
+    private val gameRepository: GameRepository,
     private val passwordEncoder: PasswordEncoder,
     private val sessionService: SessionService,
+    private val entityManager: EntityManager,
 ) {
     companion object {
         private const val EMPTY_PASSWORD_HASHED =
@@ -28,8 +35,7 @@ class UserService(
         try {
             repository.save(
                 UserModel(
-                    username = username,
-                    password = passwordEncoder.encode(password)
+                    username = username, password = passwordEncoder.encode(password)
                 )
             )
         } catch (_: DataIntegrityViolationException) {
@@ -67,5 +73,20 @@ class UserService(
         // Remove the session cookie
         val cookie = sessionService.deleteSessionCookie()
         response.addCookie(cookie)
+    }
+
+    // TODO: Modify to return all highscores when userId == null
+    fun getHighscore(userId: UUID): Int {
+        val query =
+            entityManager.createQuery("SELECT g FROM GameModel g WHERE g.user.id = :user_id ORDER BY g.score DESC LIMIT 1")
+        query.setParameter("user_id", userId)
+
+        val score: Int = try {
+            (query.singleResult as GameModel).score
+        } catch (e: NoResultException) {
+            0
+        }
+
+        return score
     }
 }

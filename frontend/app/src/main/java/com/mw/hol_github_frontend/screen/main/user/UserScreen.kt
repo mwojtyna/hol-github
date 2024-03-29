@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -15,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -36,7 +38,7 @@ fun UserScreen(
     viewModel: UserViewModel = hiltViewModel(),
     navigateToSignIn: () -> Unit,
 ) {
-    val username by rememberSaveable { viewModel.username }
+    val username by viewModel.username.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.fetchUserData()
@@ -45,9 +47,7 @@ fun UserScreen(
     Surface(
         modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
     ) {
-        Card(
-            modifier = Modifier.wrapContentSize()
-        ) {
+        Card(modifier = Modifier.wrapContentSize()) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,

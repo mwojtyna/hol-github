@@ -50,6 +50,9 @@ class UserController(
 
     @GetMapping("/me")
     fun me(@AuthenticationPrincipal auth: AuthDto): ApiUserProfileGetResponse {
-        return ApiUserProfileGetResponse(auth.user.username)
+        return ApiUserProfileGetResponse(
+            username = auth.user.username,
+            highscore = service.getHighscore(auth.user.id!!)
+        )
     }
 }

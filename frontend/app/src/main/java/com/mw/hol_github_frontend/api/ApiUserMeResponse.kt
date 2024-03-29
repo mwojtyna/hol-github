@@ -1,3 +1,3 @@
 package com.mw.hol_github_frontend.api
 
-data class ApiUserMeResponse(val username: String)
+data class ApiUserMeResponse(val username: String, val highscore: Int)

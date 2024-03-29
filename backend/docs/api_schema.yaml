@@ -150,5 +150,7 @@ paths:
                 properties:
                   username:
                     type: string
+                  highscore:
+                    type: number
         401:
           description: User not logged in

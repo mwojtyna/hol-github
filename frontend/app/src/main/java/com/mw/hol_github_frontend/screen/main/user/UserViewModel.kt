@@ -1,14 +1,14 @@
 package com.mw.hol_github_frontend.screen.main.user
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.mw.hol_github_frontend.api.ApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(private val apiClient: ApiClient) : ViewModel() {
-    val username = mutableStateOf("username")
+    val username = MutableStateFlow("username")
 
     suspend fun fetchUserData(): Boolean {
         val res = apiClient.user.me()
