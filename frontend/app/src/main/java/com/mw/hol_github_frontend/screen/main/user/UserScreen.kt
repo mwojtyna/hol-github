@@ -29,9 +29,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.mw.hol_github_frontend.R
 import com.mw.hol_github_frontend.api.ApiClient
-import com.mw.hol_github_frontend.composable.AppBottomNavigation
-import com.mw.hol_github_frontend.composable.AppScaffold
-import com.mw.hol_github_frontend.composable.NavTarget
 import com.mw.hol_github_frontend.composable.Spinner
 import com.mw.hol_github_frontend.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -48,41 +45,38 @@ fun UserScreen(
         viewModel.fetchUserData()
     }
 
-    AppScaffold(bottomNav = { AppBottomNavigation(NavTarget.User) }) {
-        Surface(
-            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+    Surface(
+        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Icon(Icons.Outlined.AccountCircle, "username")
-                    Text(username)
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Icon(Icons.Outlined.AccountCircle, "username")
+                Text(username)
+            }
+
+            Button(onClick = {
+                viewModel.viewModelScope.launch {
+                    loading = true
+                    viewModel.signOut()
+                    navigateToSignIn()
                 }
+            }) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(
+                        10.dp, Alignment.CenterHorizontally
+                    ),
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                ) {
+                    Text(
+                        stringResource(R.string.user_signout_button), fontWeight = FontWeight.Bold
+                    )
 
-                Button(onClick = {
-                    viewModel.viewModelScope.launch {
-                        loading = true
-                        viewModel.signOut()
-                        navigateToSignIn()
-                    }
-                }) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(
-                            10.dp, Alignment.CenterHorizontally
-                        ),
-                        modifier = Modifier.padding(horizontal = 32.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.user_signout_button),
-                            fontWeight = FontWeight.Bold
-                        )
-
-                        if (loading) {
-                            Spinner()
-                        }
+                    if (loading) {
+                        Spinner()
                     }
                 }
             }
@@ -95,8 +89,7 @@ fun UserScreen(
 fun UserScreenPreview() {
     AppTheme(useDarkTheme = true) {
         UserScreen(
-            navigateToSignIn = {},
-            viewModel = UserViewModel(ApiClient(LocalContext.current))
+            navigateToSignIn = {}, viewModel = UserViewModel(ApiClient(LocalContext.current))
         )
     }
 }

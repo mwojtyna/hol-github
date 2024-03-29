@@ -6,6 +6,8 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -24,6 +26,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 const val DURATION = 300
+const val SCALE = 0.95f
 
 @Composable
 fun Navigation(
@@ -39,69 +42,89 @@ fun Navigation(
         }
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = runBlocking {
-            if (apiClient.user.me().isSuccessful) "main" else "auth"
-        },
-    ) {
-        navigation(
-            route = "auth", startDestination = "signin",
-            enterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
-                )
+    AppScaffold {
+        NavHost(
+            navController = navController,
+            startDestination = runBlocking {
+                if (apiClient.user.me().isSuccessful) "main" else "auth"
             },
         ) {
-            composable("signup") {
-                SignUpScreen(
-                    navigateToSignIn = { onMainThread { navController.navigate("signin") } },
-                    onSignUp = { afterAuth() })
+            navigation(
+                route = "auth", startDestination = "signin",
+                enterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Left, tween(DURATION)
+                    )
+                },
+                popEnterTransition = {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Right, tween(DURATION)
+                    )
+                },
+            ) {
+                composable("signup") {
+                    SignUpScreen(navigateToSignIn = { onMainThread { navController.navigate("signin") } },
+                        onSignUp = { afterAuth() })
+                }
+                composable("signin") {
+                    SignInScreen(navigateToSignUp = { onMainThread { navController.navigate("signup") } },
+                        onSignIn = { afterAuth() })
+                }
             }
-            composable("signin") {
-                SignInScreen(
-                    navigateToSignUp = { onMainThread { navController.navigate("signup") } },
-                    onSignIn = { afterAuth() })
-            }
-        }
 
-        navigation(
-            route = "main", startDestination = "game",
-            enterTransition = { fadeIn(tween(DURATION)) },
-            exitTransition = { fadeOut(tween(DURATION)) },
-            popEnterTransition = { fadeIn(tween(DURATION)) },
-            popExitTransition = { fadeOut(tween(DURATION)) },
-        ) {
-            composable("user") {
-                UserScreen(navigateToSignIn = {
-                    onMainThread {
-                        navController.popBackStack("main", inclusive = true)
-                        navController.navigate("auth")
-                    }
-                })
-            }
+            navigation(
+                route = "main", startDestination = "game",
+                enterTransition = {
+                    fadeIn(tween(DURATION)) + scaleIn(
+                        tween(DURATION),
+                        initialScale = SCALE
+                    )
+                },
+                exitTransition = {
+                    fadeOut(tween(DURATION)) + scaleOut(
+                        tween(DURATION),
+                        targetScale = SCALE
+                    )
+                },
+                popEnterTransition = {
+                    fadeIn(tween(DURATION)) + scaleIn(
+                        tween(DURATION),
+                        initialScale = SCALE
+                    )
+                },
+                popExitTransition = {
+                    fadeOut(tween(DURATION)) + scaleOut(
+                        tween(DURATION),
+                        targetScale = SCALE
+                    )
+                },
+            ) {
+                composable("user") {
+                    UserScreen(navigateToSignIn = {
+                        onMainThread {
+                            navController.popBackStack("main", inclusive = true)
+                            navController.navigate("auth")
+                        }
+                    })
+                }
 
-            composable("game") {
-                GameScreen()
-            }
+                composable("game") {
+                    GameScreen()
+                }
 
-            composable("leaderboard") {
-                LeaderboardScreen()
+                composable("leaderboard") {
+                    LeaderboardScreen()
+                }
             }
         }
     }

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import com.mw.hol_github_frontend.LocalErrorSnackbar
 
 @Composable
-fun AppScaffold(bottomNav: @Composable (() -> Unit) = {}, children: @Composable () -> Unit) {
+fun AppScaffold(children: @Composable () -> Unit) {
     val errorSnackbar = LocalErrorSnackbar.current
 
     Scaffold(
@@ -23,8 +23,9 @@ fun AppScaffold(bottomNav: @Composable (() -> Unit) = {}, children: @Composable 
                     contentColor = MaterialTheme.colorScheme.error
                 )
             }
-        }, bottomBar = bottomNav
-    ) { padding ->
+        },
+        bottomBar = { AppBottomNavigation() })
+    { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             children()
         }
