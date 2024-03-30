@@ -1,7 +1,9 @@
 package com.mw.hol_github_frontend.di
 
 import android.content.Context
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.mw.hol_github_frontend.api.ApiClient
 import dagger.Module
 import dagger.Provides
@@ -28,6 +30,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGson(): Gson {
-        return Gson()
+        return GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create()
     }
 }

@@ -10,4 +10,4 @@ data class GameDto(
 
 data class ReposDto(val first: RepoDto, val second: RepoDto)
 
-data class RepoDto(val name: String, val description: String)
+class RepoDto(val name: String, val description: String, val starAmount: Int?)
