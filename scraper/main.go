@@ -187,7 +187,7 @@ func fetchRepo(item map[string]any, ch FetchRepoChan, wg *sync.WaitGroup) {
 }
 
 func fetchImage(imgUrl *url.URL) ([]byte, error) {
-	logger.Debug("Downloading OG image", "repo_url", imgUrl.String())
+	logger.Debug("Downloading OG image", "img_url", imgUrl.String())
 
 	res, err := http.Get(imgUrl.String())
 	if err != nil {
@@ -221,7 +221,7 @@ func fetchImage(imgUrl *url.URL) ([]byte, error) {
 		return nil, err
 	}
 
-	logger.Debug("Cropping OG image", "repo_url", imgUrl.String())
+	logger.Debug("Cropping OG image", "img_url", imgUrl.String())
 	resized, err := img.Crop(size.Width, OG_IMAGE_HEIGHT, bimg.GravityNorth)
 	if err != nil {
 		return nil, err

@@ -24,10 +24,14 @@ class GameController(private val service: GameService, private val sessionRepo: 
         val gameState = game.gameState!!
 
         val firstRepo = RepoDto(
-            gameState.firstRepo.name, gameState.firstRepo.description
+            name = gameState.firstRepo.name,
+            description = gameState.firstRepo.description,
+            starAmount = gameState.firstRepo.starAmount
         )
         val secondRepo = RepoDto(
-            gameState.secondRepo.name, gameState.secondRepo.description
+            name = gameState.secondRepo.name,
+            description = gameState.secondRepo.description,
+            starAmount = null
         )
 
         val firstImageHeaders = LinkedMultiValueMap<String, String>()
@@ -89,22 +93,23 @@ class GameController(private val service: GameService, private val sessionRepo: 
                 nextRepoHeaders.set("Content-Type", "application/json")
 
                 formData.set(
-                    "result",
-                    HttpEntity(
-                        ApiGameChoosePostResponseResult.CORRECT.toString(),
-                        resultHeaders
+                    "result", HttpEntity(
+                        ApiGameChoosePostResponseResult.CORRECT.toString(), resultHeaders
                     )
                 )
                 formData.set("nextImage", HttpEntity(nextRepo.image, nextImageHeaders))
                 formData.set(
-                    "nextRepo",
-                    HttpEntity(RepoDto(nextRepo.name, nextRepo.description), nextRepoHeaders)
+                    "nextRepo", HttpEntity(
+                        RepoDto(
+                            name = nextRepo.name,
+                            description = nextRepo.description,
+                            starAmount = null
+                        ), nextRepoHeaders
+                    )
                 )
 
                 return ResponseEntity(
-                    formData,
-                    headers,
-                    HttpStatus.OK
+                    formData, headers, HttpStatus.OK
                 )
             }
 

@@ -30,6 +30,8 @@ paths:
                             type: string
                           description:
                             type: string
+                          star_amount:
+                            type: number
                       second:
                         type: object
                         properties:
