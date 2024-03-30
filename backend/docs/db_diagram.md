@@ -44,6 +44,6 @@ erDiagram
     user 1--0+ session: "session"
     session 1--zero or one game: "current_game"
     game 1--zero or one game_state: "game_state"
-    game_state 1--1 repo: "first_repo"
-    game_state 1--1 repo: "second_repo"
+    game_state 1+--1 repo: "first_repo"
+    game_state 1+--1 repo: "second_repo"
 ```
