@@ -19,6 +19,7 @@ import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.screen.auth.signin.SignInScreen
 import com.mw.hol_github_frontend.screen.auth.signup.SignUpScreen
 import com.mw.hol_github_frontend.screen.main.game.GameScreen
+import com.mw.hol_github_frontend.screen.main.gamestart.GameStartScreen
 import com.mw.hol_github_frontend.screen.main.leaderboard.LeaderboardScreen
 import com.mw.hol_github_frontend.screen.main.user.UserScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,29 +84,25 @@ fun Navigation(
             }
 
             navigation(
-                route = "main", startDestination = "game",
+                route = "main", startDestination = "gamestart",
                 enterTransition = {
                     fadeIn(tween(DURATION)) + scaleIn(
-                        tween(DURATION),
-                        initialScale = SCALE
+                        tween(DURATION), initialScale = SCALE
                     )
                 },
                 exitTransition = {
                     fadeOut(tween(DURATION)) + scaleOut(
-                        tween(DURATION),
-                        targetScale = SCALE
+                        tween(DURATION), targetScale = SCALE
                     )
                 },
                 popEnterTransition = {
                     fadeIn(tween(DURATION)) + scaleIn(
-                        tween(DURATION),
-                        initialScale = SCALE
+                        tween(DURATION), initialScale = SCALE
                     )
                 },
                 popExitTransition = {
                     fadeOut(tween(DURATION)) + scaleOut(
-                        tween(DURATION),
-                        targetScale = SCALE
+                        tween(DURATION), targetScale = SCALE
                     )
                 },
             ) {
@@ -118,12 +115,16 @@ fun Navigation(
                     })
                 }
 
-                composable("game") {
-                    GameScreen()
+                composable("gamestart") {
+                    GameStartScreen(onStartGame = { onMainThread { navController.navigate("game") } })
                 }
 
                 composable("leaderboard") {
                     LeaderboardScreen()
+                }
+
+                composable("game") {
+                    GameScreen()
                 }
             }
         }

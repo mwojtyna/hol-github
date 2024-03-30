@@ -7,6 +7,8 @@ import androidx.datastore.core.Serializer
 import androidx.datastore.dataStore
 import com.google.protobuf.InvalidProtocolBufferException
 import com.mw.hol_github_frontend.BuildConfig
+import com.mw.hol_github_frontend.api.game.GameApi
+import com.mw.hol_github_frontend.api.user.UserApi
 import com.mw.hol_github_frontend.proto.PersistentCookie
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
@@ -36,10 +38,14 @@ class RetrofitClient(private val context: Context) {
 }
 
 class ApiClient(@ApplicationContext context: Context) {
-    private val client = RetrofitClient(context)
+    private val client by lazy { RetrofitClient(context) }
 
     val user: UserApi by lazy {
         client.retrofit.create(UserApi::class.java)
+    }
+
+    val game: GameApi by lazy {
+        client.retrofit.create(GameApi::class.java)
     }
 }
 
@@ -71,16 +77,15 @@ class PersistentCookieStore(private val context: Context) : CookieStore {
         runBlocking {
             context.cookieDataStore.updateData {
                 if (!cookie.hasExpired()) {
-                    PersistentCookie.newBuilder()
-                        .apply {
-                            name = cookie.name
-                            value = cookie.value
-                            domain = uri.host
-                            path = cookie.path
-                            httpOnly = cookie.isHttpOnly
-                            secure = cookie.secure
-                            maxAge = cookie.maxAge
-                        }.build()
+                    PersistentCookie.newBuilder().apply {
+                        name = cookie.name
+                        value = cookie.value
+                        domain = uri.host
+                        path = cookie.path
+                        httpOnly = cookie.isHttpOnly
+                        secure = cookie.secure
+                        maxAge = cookie.maxAge
+                    }.build()
                 } else {
                     null
                 }

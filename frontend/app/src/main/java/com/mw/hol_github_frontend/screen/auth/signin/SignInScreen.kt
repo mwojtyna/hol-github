@@ -165,7 +165,7 @@ fun SignInScreen(
 
 @Preview
 @Composable
-fun Preview() {
+private fun SignInPreview() {
     AppTheme(useDarkTheme = true) {
         SignInScreen(viewModel = SignInViewModel(ApiClient(LocalContext.current)),
             navigateToSignUp = {},

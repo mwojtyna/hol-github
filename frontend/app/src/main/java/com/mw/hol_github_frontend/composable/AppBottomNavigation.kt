@@ -33,7 +33,7 @@ import com.mw.hol_github_frontend.theme.AppTheme
 
 sealed class NavTarget(val route: String) {
     data object User : NavTarget("user")
-    data object Game : NavTarget("game")
+    data object Game : NavTarget("gamestart")
     data object Leaderboard : NavTarget("leaderboard")
 }
 
@@ -75,6 +75,7 @@ fun AppBottomNavigation() {
             { _, destination, _ ->
                 selectedItemIndex = items.indexOfFirst { it.screen.route == destination.route }
             }
+
         navController.addOnDestinationChangedListener(onRouteChangeListener)
 
         onDispose {

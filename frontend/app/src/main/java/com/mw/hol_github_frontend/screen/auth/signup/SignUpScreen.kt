@@ -198,7 +198,7 @@ fun SignUpScreen(
 
 @Preview
 @Composable
-fun Preview() {
+private fun SignUpPreview() {
     val context = LocalContext.current
 
     AppTheme(useDarkTheme = true) {

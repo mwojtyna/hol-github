@@ -158,20 +158,26 @@ func fetchGhApi() (ResponseBody, error) {
 func fetchRepo(item map[string]any, ch FetchRepoChan, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	url, err := url.Parse(GetJsonProperty[string](item, "html_url"))
+	repoUrl, err := url.Parse(GetJsonProperty[string](item, "html_url"))
 	if err != nil {
-		logger.Warn("Skipping repo because of error", "repo_url", url, "error", err.Error())
+		logger.Warn("Skipping repo because of error", "repo_url", repoUrl, "error", err.Error())
 		ch <- FetchRepoReturnType{Repo{}, err}
 	}
 
-	img, err := fetchImage(url)
+	imgUrl, err := getImageUrl(repoUrl)
 	if err != nil {
-		logger.Warn("Skipping repo because of error", "repo_url", url, "error", err.Error())
+		logger.Warn("Skipping repo because of error", "repo_url", repoUrl, "error", err.Error())
+		ch <- FetchRepoReturnType{Repo{}, err}
+	}
+
+	img, err := fetchImage(imgUrl)
+	if err != nil {
+		logger.Warn("Skipping repo because of error", "repo_url", repoUrl, "error", err.Error())
 		ch <- FetchRepoReturnType{Repo{}, err}
 	}
 
 	repo := Repo{
-		url:         url,
+		url:         repoUrl,
 		name:        GetJsonProperty[string](item, "full_name"),
 		description: GetJsonProperty[string](item, "description"),
 		stars:       uint(GetJsonProperty[float64](item, "stargazers_count")),
@@ -180,13 +186,8 @@ func fetchRepo(item map[string]any, ch FetchRepoChan, wg *sync.WaitGroup) {
 	ch <- FetchRepoReturnType{repo, nil}
 }
 
-func fetchImage(repoUrl *url.URL) ([]byte, error) {
-	imgUrl, err := getImageUrl(repoUrl)
-	if err != nil {
-		return nil, err
-	}
-
-	logger.Debug("Downloading OG image", "repo_url", repoUrl.String())
+func fetchImage(imgUrl *url.URL) ([]byte, error) {
+	logger.Debug("Downloading OG image", "repo_url", imgUrl.String())
 
 	res, err := http.Get(imgUrl.String())
 	if err != nil {
@@ -203,8 +204,14 @@ func fetchImage(repoUrl *url.URL) ([]byte, error) {
 	}
 
 	img := bimg.NewImage(body)
+	converted, err := img.Convert(bimg.JPEG)
+	if err != nil {
+		return nil, err
+	}
 
-	// If custom og image skip hiding stars
+	img = bimg.NewImage(converted)
+
+	// If custom og image, don't hide stars
 	if imgUrl.Host != OG_IMAGE_HOST {
 		return body, nil
 	}
@@ -214,7 +221,7 @@ func fetchImage(repoUrl *url.URL) ([]byte, error) {
 		return nil, err
 	}
 
-	logger.Debug("Cropping OG image", "repo_url", repoUrl.String())
+	logger.Debug("Cropping OG image", "repo_url", imgUrl.String())
 	resized, err := img.Crop(size.Width, OG_IMAGE_HEIGHT, bimg.GravityNorth)
 	if err != nil {
 		return nil, err

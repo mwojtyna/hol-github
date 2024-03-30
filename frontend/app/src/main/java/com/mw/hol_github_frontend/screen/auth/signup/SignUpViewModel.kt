@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.mw.hol_github_frontend.R
 import com.mw.hol_github_frontend.api.ApiClient
-import com.mw.hol_github_frontend.api.ApiUserSignupRequest
+import com.mw.hol_github_frontend.api.user.ApiUserSignupRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

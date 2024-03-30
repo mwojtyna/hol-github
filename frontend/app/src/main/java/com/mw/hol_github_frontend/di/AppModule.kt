@@ -1,6 +1,7 @@
 package com.mw.hol_github_frontend.di
 
 import android.content.Context
+import com.google.gson.Gson
 import com.mw.hol_github_frontend.api.ApiClient
 import dagger.Module
 import dagger.Provides
@@ -22,5 +23,11 @@ object AppModule {
     @Singleton
     fun provideApiClient(@ApplicationContext context: Context): ApiClient {
         return ApiClient(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return Gson()
     }
 }

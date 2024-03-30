@@ -1,4 +1,4 @@
-package com.mw.hol_github_frontend.screen.main.user
+package com.mw.hol_github_frontend.screen.main.gamestart
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Leaderboard
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -20,26 +20,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
-import com.mw.hol_github_frontend.R
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.theme.AppTheme
-import kotlinx.coroutines.launch
 
 @Composable
-fun UserScreen(
-    viewModel: UserViewModel = hiltViewModel(),
-    navigateToSignIn: () -> Unit,
+fun GameStartScreen(
+    viewModel: GameStartViewModel = hiltViewModel(),
+    onStartGame: () -> Unit,
 ) {
-    val username by viewModel.username.collectAsState()
+    val highscore by viewModel.highscore.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchUserData()
+        viewModel.fetchHighscore()
     }
 
     Surface(
@@ -52,20 +48,15 @@ fun UserScreen(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Icon(Icons.Outlined.AccountCircle, "username")
-                    Text(username)
+                    Icon(Icons.Outlined.Leaderboard, "highscore")
+                    Text(highscore.toString())
                 }
 
-                Button(onClick = {
-                    viewModel.viewModelScope.launch {
-                        viewModel.signOut()
-                        navigateToSignIn()
-                    }
-                }) {
+                Button(onClick = onStartGame) {
                     Text(
-                        stringResource(R.string.user_signout_button),
+                        "Start game",
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 12.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp)
                     )
                 }
             }
@@ -73,12 +64,11 @@ fun UserScreen(
     }
 }
 
-@Composable
 @Preview
-private fun UserScreenPreview() {
+@Composable
+private fun GameScreenPreview() {
     AppTheme(useDarkTheme = true) {
-        UserScreen(
-            navigateToSignIn = {}, viewModel = UserViewModel(ApiClient(LocalContext.current))
-        )
+        GameStartScreen(viewModel = GameStartViewModel(ApiClient(LocalContext.current)),
+            onStartGame = {})
     }
 }

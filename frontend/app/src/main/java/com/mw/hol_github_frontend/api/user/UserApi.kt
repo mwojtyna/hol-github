@@ -1,4 +1,4 @@
-package com.mw.hol_github_frontend.api
+package com.mw.hol_github_frontend.api.user
 
 import retrofit2.Response
 import retrofit2.http.Body
