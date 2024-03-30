@@ -33,10 +33,7 @@ class GameService(
         }
 
         val firstRepo = getRandomRepo()
-        var secondRepo = getRandomRepo()
-        while (secondRepo.id == firstRepo.id) {
-            secondRepo = getRandomRepo()
-        }
+        val secondRepo = getRandomRepo(firstRepo.id)
 
         val gameState = GameStateModel(firstRepo = firstRepo, secondRepo = secondRepo)
         gameStateRepository.save(gameState)
@@ -66,7 +63,7 @@ class GameService(
             game.score++
             repository.save(game)
 
-            val nextRepo = getRandomRepo()
+            val nextRepo = getRandomRepo(gameState.firstRepo.id)
             gameState.firstRepo = gameState.secondRepo
             gameState.secondRepo = nextRepo
             gameStateRepository.save(gameState)
@@ -106,14 +103,19 @@ class GameService(
         }
     }
 
-    private fun getRandomRepo(): RepoModel {
+    private fun getRandomRepo(except: UUID? = null): RepoModel {
         val countQuery = entityManager.createQuery("SELECT COUNT(r) FROM RepoModel r")
         val count = countQuery.singleResult as Long
 
         val random = Random()
         val number = random.nextInt(count.toInt())
 
-        val selectQuery = entityManager.createQuery("SELECT r FROM RepoModel r")
+        val selectQuery = if (except == null) {
+            entityManager.createQuery("SELECT r FROM RepoModel r")
+        } else {
+            entityManager.createQuery("SELECT r FROM RepoModel r WHERE r.id <> :id")
+                .setParameter("id", except)
+        }
         selectQuery.firstResult = number
         selectQuery.maxResults = 1
 
