@@ -18,7 +18,7 @@ import java.net.URLConnection
 @RestController
 @RequestMapping("/game")
 class GameController(private val service: GameService, private val sessionRepo: SessionRepository) {
-    @PostMapping("/new", produces = ["multipart/form-data"])
+    @PostMapping("/new", produces = ["multipart/related"])
     fun new(@AuthenticationPrincipal auth: AuthDto): ResponseEntity<LinkedMultiValueMap<String, Any>> {
         val game = service.createGame(auth)
         val gameState = game.gameState!!
@@ -70,18 +70,29 @@ class GameController(private val service: GameService, private val sessionRepo: 
             throw NoSuchElementException()
         }
 
-        val result = service.chooseRepo(session.currentGame!!.id!!, body.choice, auth)
+        val chooseRepoResult = service.chooseRepo(session.currentGame!!.id!!, body.choice, auth)
 
-        when (result.result) {
+        val formData = LinkedMultiValueMap<String, Any>()
+        val headers = LinkedMultiValueMap<String, String>()
+        headers.set("Content-Type", "multipart/related")
+
+        val textPlainHeaders = LinkedMultiValueMap<String, String>()
+        textPlainHeaders.set("Content-Type", "text/plain")
+
+        formData.set(
+            "result", HttpEntity(
+                chooseRepoResult.result.toString(), textPlainHeaders
+            )
+        )
+        formData.set(
+            "secondRepoStarAmount", HttpEntity(
+                chooseRepoResult.secondRepoStarAmount.toString(), textPlainHeaders
+            )
+        )
+
+        when (chooseRepoResult.result) {
             ApiGameChoosePostResponseResult.CORRECT -> {
-                val nextRepo = result.nextRepo!!
-
-                val formData = LinkedMultiValueMap<String, Any>()
-                val headers = LinkedMultiValueMap<String, String>()
-                headers.set("Content-Type", "multipart/form-data")
-
-                val resultHeaders = LinkedMultiValueMap<String, String>()
-                resultHeaders.set("Content-Type", "text/plain")
+                val nextRepo = chooseRepoResult.nextRepo!!
 
                 val nextImageHeaders = LinkedMultiValueMap<String, String>()
                 nextImageHeaders.set(
@@ -92,11 +103,6 @@ class GameController(private val service: GameService, private val sessionRepo: 
                 val nextRepoHeaders = LinkedMultiValueMap<String, String>()
                 nextRepoHeaders.set("Content-Type", "application/json")
 
-                formData.set(
-                    "result", HttpEntity(
-                        ApiGameChoosePostResponseResult.CORRECT.toString(), resultHeaders
-                    )
-                )
                 formData.set("nextImage", HttpEntity(nextRepo.image, nextImageHeaders))
                 formData.set(
                     "nextRepo", HttpEntity(
@@ -114,13 +120,8 @@ class GameController(private val service: GameService, private val sessionRepo: 
             }
 
             ApiGameChoosePostResponseResult.WRONG -> {
-                val headers = LinkedMultiValueMap<String, String>()
-                headers.set("Content-Type", "application/json")
-
                 return ResponseEntity(
-                    ApiGameChoosePostResponse(ApiGameChoosePostResponseResult.WRONG),
-                    headers,
-                    HttpStatus.OK
+                    formData, headers, HttpStatus.OK
                 )
             }
         }

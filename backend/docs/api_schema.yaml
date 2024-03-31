@@ -10,7 +10,7 @@ paths:
         200:
           description: OK
           content:
-            multipart/form-data:
+            multipart/related:
               schema:
                 type: object
                 properties:
@@ -30,7 +30,7 @@ paths:
                             type: string
                           description:
                             type: string
-                          star_amount:
+                          starAmount:
                             type: number
                       second:
                         type: object
@@ -54,35 +54,37 @@ paths:
                   enum: [ HIGHER, LOWER ]
       responses:
         404:
-          description: Game with provided id doesn't exist
+          description: No game assigned to user
         200:
           description: OK
           content:
-            application/json:
+            multipart/related:
               schema:
-                type: object
-                properties:
-                  result:
-                    type: string
-                    enum: [ WRONG ]
-
-            multipart/form-data:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: string
-                    enum: [ CORRECT ]
-                  nextImage:
-                    type: string
-                    format: binary
-                  nextRepo:
-                    type: object
+                oneOf:
+                  - type: object
                     properties:
-                      name:
+                      result:
                         type: string
-                      description:
+                        enum: [ WRONG ]
+                      secondRepoStarAmount:
+                        type: number
+                  - type: object
+                    properties:
+                      result:
                         type: string
+                        enum: [ CORRECT ]
+                      starAmount:
+                        type: number
+                      nextImage:
+                        type: string
+                        format: binary
+                      nextRepo:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          description:
+                            type: string
 
   /api/user/signup:
     post:

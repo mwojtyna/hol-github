@@ -1,6 +1,7 @@
 package org.mw.holgithub.service
 
 import jakarta.persistence.EntityManager
+import jakarta.persistence.Query
 import org.mw.holgithub.dto.ApiGameChoosePostRequestChoice
 import org.mw.holgithub.dto.ApiGameChoosePostResponseResult
 import org.mw.holgithub.dto.AuthDto
@@ -59,18 +60,25 @@ class GameService(
             ?: throw IllegalStateException("Game state is null but session has a current game")
         val session = sessionRepository.findById(auth.sessionId).get()
 
-        val onCorrect = fun(): RepoModel {
+        val onCorrect = fun(): ChooseRepoResult {
             game.score++
             repository.save(game)
 
-            val nextRepo = getRandomRepo(gameState.firstRepo.id)
-            gameState.firstRepo = gameState.secondRepo
+            val nextRepo =
+                getRandomRepo(except1 = gameState.firstRepo.id, except2 = gameState.secondRepo.id)
+            val secondRepoStarAmount = gameState.secondRepo.starAmount
+
+            gameState.firstRepo = gameState.secondRepo.copy()
             gameState.secondRepo = nextRepo
             gameStateRepository.save(gameState)
 
-            return nextRepo
+            return ChooseRepoResult(
+                result = ApiGameChoosePostResponseResult.CORRECT,
+                secondRepoStarAmount = secondRepoStarAmount,
+                nextRepo = nextRepo
+            )
         }
-        val onWrong = fun() {
+        val onWrong = fun(): ChooseRepoResult {
             game.gameState = null
             repository.save(game)
 
@@ -78,52 +86,61 @@ class GameService(
             sessionRepository.save(session)
 
             gameStateRepository.delete(gameState)
+
+            return ChooseRepoResult(
+                result = ApiGameChoosePostResponseResult.WRONG,
+                secondRepoStarAmount = gameState.secondRepo.starAmount
+            )
         }
 
         when (choice) {
             ApiGameChoosePostRequestChoice.HIGHER -> {
-                if (gameState.secondRepo.starAmount >= gameState.firstRepo.starAmount) {
-                    val nextRepo = onCorrect()
-                    return ChooseRepoResult(ApiGameChoosePostResponseResult.CORRECT, nextRepo)
+                return if (gameState.secondRepo.starAmount >= gameState.firstRepo.starAmount) {
+                    onCorrect()
                 } else {
                     onWrong()
-                    return ChooseRepoResult(ApiGameChoosePostResponseResult.WRONG)
                 }
             }
 
             ApiGameChoosePostRequestChoice.LOWER -> {
-                if (gameState.secondRepo.starAmount <= gameState.firstRepo.starAmount) {
-                    val nextRepo = onCorrect()
-                    return ChooseRepoResult(ApiGameChoosePostResponseResult.CORRECT, nextRepo)
+                return if (gameState.secondRepo.starAmount <= gameState.firstRepo.starAmount) {
+                    onCorrect()
                 } else {
                     onWrong()
-                    return ChooseRepoResult(ApiGameChoosePostResponseResult.WRONG)
                 }
             }
         }
     }
 
-    private fun getRandomRepo(except: UUID? = null): RepoModel {
+    private fun getRandomRepo(except1: UUID? = null, except2: UUID? = null): RepoModel {
         val countQuery = entityManager.createQuery("SELECT COUNT(r) FROM RepoModel r")
-        val count = countQuery.singleResult as Long
+        val count = (countQuery.singleResult as Long).toInt()
 
-        val random = Random()
-        val number = random.nextInt(count.toInt())
+        val filteredOutRows: Int
+        val selectQuery: Query
 
-        val selectQuery = if (except == null) {
-            entityManager.createQuery("SELECT r FROM RepoModel r")
+        if (except1 == null && except2 == null) {
+            filteredOutRows = 0
+            selectQuery = entityManager.createQuery("SELECT r FROM RepoModel r")
+        } else if ((except1 != null && except2 == null) || (except1 == null && except2 != null)) {
+            filteredOutRows = 1
+            selectQuery = entityManager.createQuery("SELECT r FROM RepoModel r WHERE r.id <> :id")
+                .setParameter("id", except1 ?: except2)
         } else {
-            entityManager.createQuery("SELECT r FROM RepoModel r WHERE r.id <> :id")
-                .setParameter("id", except)
+            filteredOutRows = 2
+            selectQuery =
+                entityManager.createQuery("SELECT r FROM RepoModel r WHERE r.id <> :id1 AND r.id <> :id2")
+                    .setParameter("id1", except1).setParameter("id2", except2)
         }
-        selectQuery.firstResult = number
-        selectQuery.maxResults = 1
 
-        return selectQuery.singleResult as RepoModel
+        val random = Random().nextInt(count - filteredOutRows)
+        val results = selectQuery.resultList as List<*>
+        return results[random] as RepoModel
     }
 }
 
 data class ChooseRepoResult(
     val result: ApiGameChoosePostResponseResult,
+    val secondRepoStarAmount: Int,
     val nextRepo: RepoModel? = null,
 )

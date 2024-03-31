@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,7 +56,7 @@ fun SignInScreen(
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var loading by rememberSaveable { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
     val errorSnackbar = LocalErrorSnackbar.current
