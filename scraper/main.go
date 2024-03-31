@@ -162,18 +162,21 @@ func fetchRepo(item map[string]any, ch FetchRepoChan, wg *sync.WaitGroup) {
 	if err != nil {
 		logger.Warn("Skipping repo because of error", "repo_url", repoUrl, "error", err.Error())
 		ch <- FetchRepoReturnType{Repo{}, err}
+		return
 	}
 
 	imgUrl, err := getImageUrl(repoUrl)
 	if err != nil {
 		logger.Warn("Skipping repo because of error", "repo_url", repoUrl, "error", err.Error())
 		ch <- FetchRepoReturnType{Repo{}, err}
+		return
 	}
 
 	img, err := fetchImage(imgUrl)
 	if err != nil {
 		logger.Warn("Skipping repo because of error", "repo_url", repoUrl, "error", err.Error())
 		ch <- FetchRepoReturnType{Repo{}, err}
+		return
 	}
 
 	repo := Repo{
@@ -209,14 +212,12 @@ func fetchImage(imgUrl *url.URL) ([]byte, error) {
 		return nil, err
 	}
 
-	img = bimg.NewImage(converted)
-
 	// If custom og image, don't hide stars
 	if imgUrl.Host != OG_IMAGE_HOST {
-		return body, nil
+		return converted, nil
 	}
 
-	size, err := img.Size()
+	size, err := bimg.NewImage(converted).Size()
 	if err != nil {
 		return nil, err
 	}
