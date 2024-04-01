@@ -9,5 +9,5 @@ type StatusCodeError struct {
 }
 
 func (e StatusCodeError) Error() string {
-	return strconv.Itoa(e.Code)
+	return "Status code " + strconv.Itoa(e.Code)
 }
