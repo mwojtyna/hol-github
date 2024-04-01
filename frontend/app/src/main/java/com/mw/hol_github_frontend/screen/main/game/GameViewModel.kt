@@ -1,12 +1,13 @@
 package com.mw.hol_github_frontend.screen.main.game
 
 import android.graphics.BitmapFactory
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.api.game.ApiGameChooseRequest
-import com.mw.hol_github_frontend.api.game.ApiGameChooseResponse
 import com.mw.hol_github_frontend.dto.GameDto
 import com.mw.hol_github_frontend.dto.RepoDto
 import com.mw.hol_github_frontend.dto.ReposDto
@@ -21,6 +22,11 @@ class GameViewModel @Inject constructor(
     private val apiClient: ApiClient,
     private val gson: Gson,
 ) : ViewModel() {
+    companion object {
+        const val CORRECT_DELAY = 1500L
+        const val WRONG_DELAY = 2000L
+    }
+
     val game = MutableStateFlow<GameDto?>(null)
 
     suspend fun newGame() {
@@ -45,20 +51,20 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    suspend fun choose(choice: ApiGameChooseRequest.Choice) {
+    suspend fun choose(choice: ApiGameChooseRequest.Choice): RepoDto.Result {
         val body = apiClient.game.choose(ApiGameChooseRequest(choice))
         val reader = MultipartReader(body)
 
         reader.use {
             val result = reader.nextPart()?.body?.readString(Charset.defaultCharset())
-                ?.let { ApiGameChooseResponse.Result.valueOf(it) }
+                ?.let { RepoDto.Result.valueOf(it) }
                 ?: throw IllegalStateException("Invalid response")
             val secondRepoStars =
                 reader.nextPart()?.body?.readString(Charset.defaultCharset())?.toInt()
                     ?: throw IllegalStateException("Invalid response")
 
             when (result) {
-                ApiGameChooseResponse.Result.CORRECT -> {
+                RepoDto.Result.CORRECT -> {
                     val nextImage = reader.nextPart()?.body?.readByteArray()
                         ?.let { BitmapFactory.decodeByteArray(it, 0, it.size).asImageBitmap() }
                     val nextRepo = reader.nextPart()?.body?.readString(Charset.defaultCharset())
@@ -73,30 +79,38 @@ class GameViewModel @Inject constructor(
                         description = game.value!!.repos.second.description,
                         starAmount = secondRepoStars
                     )
-                    game.value = GameDto(
-                        firstImage = game.value!!.secondImage,
-                        secondImage = nextImage,
-                        repos = ReposDto(first = newFirstRepo, second = nextRepo),
-                        score = game.value!!.score + 1
-                    )
-                }
 
-                ApiGameChooseResponse.Result.WRONG -> {
-                    game.value = GameDto(
-                        firstImage = game.value!!.firstImage,
-                        secondImage = game.value!!.secondImage,
-                        repos = ReposDto(
-                            first = game.value!!.repos.first,
-                            second = RepoDto(
-                                name = game.value!!.repos.second.name,
-                                description = game.value!!.repos.second.description,
-                                starAmount = secondRepoStars
+                    game.value = game.value!!.copy(
+                        repos = game.value!!.repos.copy(
+                            second = game.value!!.repos.second.copy(
+                                starAmount = secondRepoStars,
+                                result = RepoDto.Result.CORRECT
                             )
                         ),
-                        score = game.value!!.score
+                        score = game.value!!.score + 1,
+                    )
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        game.value = game.value!!.copy(
+                            firstImage = game.value!!.secondImage,
+                            secondImage = nextImage,
+                            repos = ReposDto(first = newFirstRepo, second = nextRepo),
+                        )
+                    }, CORRECT_DELAY)
+                }
+
+                RepoDto.Result.WRONG -> {
+                    game.value = game.value!!.copy(
+                        repos = game.value!!.repos.copy(
+                            second = game.value!!.repos.second.copy(
+                                starAmount = secondRepoStars,
+                                result = RepoDto.Result.WRONG
+                            )
+                        ),
                     )
                 }
             }
+
+            return result
         }
     }
 }

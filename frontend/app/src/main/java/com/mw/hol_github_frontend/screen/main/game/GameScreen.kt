@@ -1,5 +1,7 @@
 package com.mw.hol_github_frontend.screen.main.game
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -49,15 +49,19 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.mw.hol_github_frontend.LocalNavController
 import com.mw.hol_github_frontend.api.ApiClient
 import com.mw.hol_github_frontend.api.game.ApiGameChooseRequest
 import com.mw.hol_github_frontend.composable.Spinner
+import com.mw.hol_github_frontend.dto.GameDto
 import com.mw.hol_github_frontend.dto.RepoDto
 import com.mw.hol_github_frontend.theme.AppTheme
 import com.mw.hol_github_frontend.theme.Typography
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
     val game = viewModel.game.collectAsState()
@@ -72,66 +76,87 @@ fun GameScreen(viewModel: GameViewModel = hiltViewModel()) {
         }
     }
 
-    if (game.value != null) {
-        CenterAlignedTopAppBar(
-            title = { Text("${game.value!!.score} points") },
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-    }
-
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        if (game.value == null) {
-            Spinner(size = 64.dp, strokeWidth = 6.dp)
-            return
-        }
-
-        val game = game.value!!
-
-        Repo(
-            bitmap = game.firstImage,
-            repo = game.repos.first,
-            contentDescription = "First repo image",
-            viewModel = viewModel,
-        )
-
-        OutlinedCard(
-            modifier = Modifier.size(54.dp, 32.dp),
-            shape = CircleShape,
-        ) {
+        if (game.value != null) {
             Text(
-                "vs",
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .offset(x = 0.dp, y = 3.dp),
-                fontWeight = FontWeight.Medium,
-                fontSize = 20.sp
+                text = "${game.value!!.score} points",
+                modifier = Modifier.padding(top = 12.dp),
+                style = Typography.titleLarge
             )
         }
 
-        Repo(
-            bitmap = game.secondImage,
-            repo = game.repos.second,
-            contentDescription = "Second repo image",
-            viewModel = viewModel,
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            if (game.value == null) {
+                Spinner(size = 64.dp, strokeWidth = 6.dp)
+                return
+            }
+            val game = game.value!!
+
+            Repo(
+                bitmap = game.firstImage,
+                contentDescription = "First repo image",
+                repo = game.repos.first,
+                game = game,
+                viewModel = viewModel,
+            )
+
+            OutlinedCard(
+                modifier = Modifier.size(54.dp, 32.dp),
+                shape = CircleShape,
+            ) {
+                Text(
+                    "vs",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .offset(x = 0.dp, y = 3.dp),
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp
+                )
+            }
+
+            Repo(
+                bitmap = game.secondImage,
+                contentDescription = "Second repo image",
+                repo = game.repos.second,
+                game = game,
+                viewModel = viewModel,
+            )
+        }
     }
 }
 
 @Composable
 private fun Repo(
     bitmap: ImageBitmap,
-    repo: RepoDto,
     contentDescription: String,
+    repo: RepoDto,
+    game: GameDto,
     viewModel: GameViewModel,
 ) {
     val config = LocalConfiguration.current
+    val navController = LocalNavController.current
     var loading by remember { mutableStateOf(false) }
+
+    suspend fun choose(choice: ApiGameChooseRequest.Choice) {
+        val result = viewModel.choose(choice)
+        if (result == RepoDto.Result.WRONG) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                navController.popBackStack()
+            }, GameViewModel.WRONG_DELAY)
+        }
+    }
 
     Card(
         modifier = Modifier
@@ -169,14 +194,19 @@ private fun Repo(
 
                 if (loading) {
                     Spinner(size = 32.dp, strokeWidth = 4.dp)
-                } else {
-                    if (repo.starAmount != null) {
+                    return@Card
+                }
+
+                if (repo.starAmount != null) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(
+                                8.dp, Alignment.CenterHorizontally
+                            ),
                         ) {
+                            val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.ENGLISH))
                             Text(
-                                repo.starAmount.toString(),
+                                text = df.format(repo.starAmount).replace(',', ' '),
                                 fontSize = 32.sp,
                                 color = Color.White,
                                 fontWeight = FontWeight.Black,
@@ -186,64 +216,83 @@ private fun Repo(
                                 Icons.Filled.Star,
                                 contentDescription = "Star",
                                 tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .offset(y = 2.dp)
                             )
                         }
-                    } else {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(12.dp, 6.dp)
-                        ) {
-                            OutlinedButton(
-                                onClick = {
-                                    viewModel.viewModelScope.launch {
-                                        loading = true
-                                        viewModel.choose(
-                                            ApiGameChooseRequest.Choice.HIGHER
-                                        )
-                                        loading = false
-                                    }
-                                },
-                                colors = ButtonDefaults.outlinedButtonColors(containerColor = buttonBg)
-                            ) {
-                                Text(
-                                    "Higher",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
 
-                            Text(
-                                "or",
-                                color = Color.White,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                modifier = Modifier.padding(horizontal = 4.dp)
+                        when (repo.result) {
+                            RepoDto.Result.CORRECT -> Text(
+                                "Correct!", style = Typography.titleMedium
                             )
 
-                            OutlinedButton(
-                                onClick = {
-                                    viewModel.viewModelScope.launch {
-                                        loading = true
-                                        viewModel.choose(
-                                            ApiGameChooseRequest.Choice.LOWER
-                                        )
-                                        loading = false
-                                    }
-                                },
-                                colors = ButtonDefaults.outlinedButtonColors(containerColor = buttonBg)
+                            RepoDto.Result.WRONG -> Row(
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    4.dp
+                                )
                             ) {
                                 Text(
-                                    "Lower",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.error
+                                    "Wrong! You scored ${game.score} point${if (game.score == 0 || game.score > 1) "s" else ""}.",
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = Typography.titleMedium
                                 )
                             }
+
+                            null -> {}
+                        }
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(12.dp, 6.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                viewModel.viewModelScope.launch {
+                                    loading = true
+                                    choose(ApiGameChooseRequest.Choice.HIGHER)
+                                    loading = false
+                                }
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors(containerColor = buttonBg)
+                        ) {
+                            Text(
+                                "Higher",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
+
+                        Text(
+                            "or",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
+
+                        OutlinedButton(
+                            onClick = {
+                                viewModel.viewModelScope.launch {
+                                    loading = true
+                                    choose(ApiGameChooseRequest.Choice.LOWER)
+                                    loading = false
+                                }
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors(containerColor = buttonBg)
+                        ) {
+                            Text(
+                                "Lower",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }
+
             }
         }
     }
@@ -253,6 +302,11 @@ private fun Repo(
 @Composable
 private fun GameScreenPreview() {
     AppTheme(useDarkTheme = true) {
-        GameScreen(viewModel = GameViewModel(ApiClient(LocalContext.current), Gson()))
+        GameScreen(
+            viewModel = GameViewModel(
+                apiClient = ApiClient(LocalContext.current),
+                gson = Gson(),
+            )
+        )
     }
 }

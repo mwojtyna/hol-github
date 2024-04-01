@@ -2,7 +2,7 @@ package com.mw.hol_github_frontend.dto
 
 import androidx.compose.ui.graphics.ImageBitmap
 
-class GameDto(
+data class GameDto(
     val firstImage: ImageBitmap,
     val secondImage: ImageBitmap,
     val repos: ReposDto,
@@ -11,4 +11,14 @@ class GameDto(
 
 data class ReposDto(val first: RepoDto, val second: RepoDto)
 
-class RepoDto(val name: String, val description: String, val starAmount: Int?)
+data class RepoDto(
+    val name: String,
+    val description: String,
+    val starAmount: Int?,
+    val result: Result? = null,
+) {
+    enum class Result {
+        CORRECT,
+        WRONG
+    }
+}
