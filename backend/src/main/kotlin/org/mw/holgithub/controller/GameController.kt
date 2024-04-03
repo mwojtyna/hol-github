@@ -1,8 +1,8 @@
 package org.mw.holgithub.controller
 
 import org.mw.holgithub.dto.*
-import org.mw.holgithub.repository.SessionRepository
 import org.mw.holgithub.service.GameService
+import org.mw.holgithub.service.SessionService
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,7 +17,7 @@ import java.net.URLConnection
 
 @RestController
 @RequestMapping("/game")
-class GameController(private val service: GameService, private val sessionRepo: SessionRepository) {
+class GameController(private val service: GameService, private val sessionService: SessionService) {
     @PostMapping("/new", produces = ["multipart/related"])
     fun new(@AuthenticationPrincipal auth: AuthDto): ResponseEntity<LinkedMultiValueMap<String, Any>> {
         val game = service.createGame(auth)
@@ -65,8 +65,8 @@ class GameController(private val service: GameService, private val sessionRepo: 
         @RequestBody body: ApiGameChoosePostRequest,
         @AuthenticationPrincipal auth: AuthDto,
     ): ResponseEntity<Any> {
-        val session = sessionRepo.findById(auth.sessionId).get()
-        if (session.currentGame == null) {
+        val session = sessionService.getSession(auth.sessionId)
+        if (session!!.currentGame == null) {
             throw NoSuchElementException()
         }
 

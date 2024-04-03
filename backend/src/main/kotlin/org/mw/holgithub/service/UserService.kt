@@ -8,7 +8,6 @@ import org.mw.holgithub.dto.AuthDto
 import org.mw.holgithub.exception.UserAlreadyExistsException
 import org.mw.holgithub.model.GameModel
 import org.mw.holgithub.model.UserModel
-import org.mw.holgithub.repository.GameRepository
 import org.mw.holgithub.repository.UserRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.authentication.BadCredentialsException
@@ -21,7 +20,6 @@ import java.util.*
 @Service
 class UserService(
     private val repository: UserRepository,
-    private val gameRepository: GameRepository,
     private val passwordEncoder: PasswordEncoder,
     private val sessionService: SessionService,
     private val entityManager: EntityManager,
@@ -75,7 +73,6 @@ class UserService(
         response.addCookie(cookie)
     }
 
-    // TODO: Modify to return all highscores when userId == null
     fun getHighscore(userId: UUID): Int {
         val query =
             entityManager.createQuery("SELECT g FROM GameModel g WHERE g.user.id = :user_id ORDER BY g.score DESC LIMIT 1")

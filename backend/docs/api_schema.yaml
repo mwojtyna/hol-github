@@ -158,3 +158,21 @@ paths:
                     type: number
         401:
           description: User not logged in
+
+  /api/leaderboard:
+    get:
+      summary: Get leaderboard data
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    score:
+                      type: number
