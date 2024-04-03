@@ -8,16 +8,16 @@ class LeaderboardService(private val entityManager: EntityManager) {
     fun getUserScores(): List<LeaderboardEntry> {
         val query = entityManager.createNativeQuery(
             """
-                WITH max_per_user AS (
-                    SELECT user_id, MAX(score) AS score FROM "game"
-                    GROUP BY user_id
-                )
-                
-                SELECT u.username, g.score FROM "user" AS u
-                INNER JOIN max_per_user AS g ON g.user_id = u.id
-                ORDER BY g.score DESC
-                LIMIT 100
-                """.trimIndent()
+            WITH max_per_user AS (
+                SELECT user_id, MAX(score) AS score FROM "game"
+                GROUP BY user_id
+            )
+            
+            SELECT u.username, g.score FROM "user" AS u
+            INNER JOIN max_per_user AS g ON g.user_id = u.id
+            ORDER BY g.score DESC
+            LIMIT 100
+            """.trimIndent()
         )
 
         val leaderboard = query.resultList as List<Array<Any>>

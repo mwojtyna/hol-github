@@ -1,11 +1,11 @@
 _type: export
 __export_format: 4
-__export_date: 2024-03-28T02:59:20.750Z
+__export_date: 2024-04-03T16:24:11.171Z
 __export_source: insomnia.desktop.app:v0.2.3-a
 resources:
-  - _id: req_06bcb506b6384e9d97e54fafd4a196a6
-    parentId: fld_f4eefce54d1040c4918383791fca8997
-    modified: 1711594166628
+  - _id: req_b40187e58dda494a8db6d29ecce0a6b1
+    parentId: fld_3d94114b8e4b4baeaa71633fb75965bf
+    modified: 1712161040321
     created: 1710287069355
     url: http://localhost:3000/api/user/signup
     name: signup
@@ -15,7 +15,7 @@ resources:
       mimeType: application/json
       text: |-
         {
-        	"username": "mati",
+        	"username": "mati2",
         	"password": "Zaq1@wsx"
         }
     parameters: []
@@ -35,26 +35,26 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: fld_f4eefce54d1040c4918383791fca8997
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1711594150510
+  - _id: fld_3d94114b8e4b4baeaa71633fb75965bf
+    parentId: wrk_05084619d2a74a4592e81f4543455711
+    modified: 1712158488661
     created: 1711594150510
     name: user
     description: ""
     environment: {}
     environmentPropertyOrder: null
-    metaSortKey: -1711594150510
+    metaSortKey: -1711594150710
     _type: request_group
-  - _id: wrk_9e2020fab60c498c869d8ed7c25aacee
+  - _id: wrk_05084619d2a74a4592e81f4543455711
     parentId: null
-    modified: 1710448258326
-    created: 1710448258326
+    modified: 1712158411137
+    created: 1712158411137
     name: hol-github
     description: ""
     scope: collection
     _type: workspace
-  - _id: req_64ea65a5def749b1b6f8777ad45876fe
-    parentId: fld_f4eefce54d1040c4918383791fca8997
+  - _id: req_d1e8f116e67b4ae4aa7e4d721c5d9fc5
+    parentId: fld_3d94114b8e4b4baeaa71633fb75965bf
     modified: 1711594171523
     created: 1710289066946
     url: http://localhost:3000/api/user/signin
@@ -85,8 +85,8 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: req_a33cbac8062544eb918462eafbcae93a
-    parentId: fld_f4eefce54d1040c4918383791fca8997
+  - _id: req_ae3fe7190bea47f79a373121d6cf1a68
+    parentId: fld_3d94114b8e4b4baeaa71633fb75965bf
     modified: 1711594176724
     created: 1710287220315
     url: http://localhost:3000/api/user/signout
@@ -109,8 +109,8 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: req_d26daff3040d45519e2d73b74abce958
-    parentId: fld_f4eefce54d1040c4918383791fca8997
+  - _id: req_830b824abf634e868e9541e7665ac01a
+    parentId: fld_3d94114b8e4b4baeaa71633fb75965bf
     modified: 1711594363584
     created: 1711594256090
     url: http://localhost:3000/api/user/me
@@ -133,8 +133,8 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: req_ec7c97b5df5c4f3dbdd6a09ae82cfe55
-    parentId: fld_dc0181d8124340ddaa64bc41b15cf09a
+  - _id: req_e689c8a82b5f4de0a644ccb68b9cbb81
+    parentId: fld_930f67b819f54ef09385c6fa0849c6b8
     modified: 1711594203145
     created: 1710774740707
     url: http://localhost:3000/api/game/new
@@ -157,18 +157,18 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: fld_dc0181d8124340ddaa64bc41b15cf09a
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1711594193262
+  - _id: fld_930f67b819f54ef09385c6fa0849c6b8
+    parentId: wrk_05084619d2a74a4592e81f4543455711
+    modified: 1712158490528
     created: 1711594181114
     name: game
     description: ""
     environment: {}
     environmentPropertyOrder: null
-    metaSortKey: -1710287069004
+    metaSortKey: -1711594150660
     _type: request_group
-  - _id: req_82554d85234f4d66a5f427316bf929f4
-    parentId: fld_dc0181d8124340ddaa64bc41b15cf09a
+  - _id: req_bec113c3decb428b9d8c385835359c6f
+    parentId: fld_930f67b819f54ef09385c6fa0849c6b8
     modified: 1711594206270
     created: 1710789580705
     url: http://localhost:3000/api/game/choose
@@ -198,8 +198,32 @@ resources:
     settingFollowRedirects: global
     segmentParams: []
     _type: request
-  - _id: env_1617506bd1e14e3dae3ca9766301c832
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
+  - _id: req_5683b071e3324afd8feb34c4e43aca75
+    parentId: wrk_05084619d2a74a4592e81f4543455711
+    modified: 1712158910229
+    created: 1712158436581
+    url: http://localhost:3000/api/leaderboard
+    name: leaderboard
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnium/0.2.3-a
+    authentication: {}
+    metaSortKey: -1711594150610
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    segmentParams: []
+    _type: request
+  - _id: env_a8caed3ba79243b9b97f4b8b973c9360
+    parentId: wrk_05084619d2a74a4592e81f4543455711
     modified: 1710292465489
     created: 1710292465489
     name: Base Environment
@@ -209,22 +233,22 @@ resources:
     isPrivate: false
     metaSortKey: 1710292465489
     _type: environment
-  - _id: jar_826c4a2ed7a042e1bcd84fc411c96e4f
-    parentId: wrk_9e2020fab60c498c869d8ed7c25aacee
-    modified: 1711594292599
+  - _id: jar_b276178afa2d43c4b1777ca04f5aa2bd
+    parentId: wrk_05084619d2a74a4592e81f4543455711
+    modified: 1712161041246
     created: 1710292466489
     name: Default Jar
     cookies:
       - key: SESSION_ID
-        value: add7d63f-6c73-4791-a6a1-618f067ca58f
-        expires: 2024-04-04T02:51:32.000Z
+        value: 031ac198-8184-48d0-ae07-a05930926b66
+        expires: 2024-04-10T16:17:21.000Z
         maxAge: 604800
         domain: localhost
         path: /api
         httpOnly: true
         hostOnly: true
         creation: 2024-03-15T15:55:48.760Z
-        lastAccessed: 2024-03-28T02:51:32.599Z
+        lastAccessed: 2024-04-03T16:17:21.246Z
         sameSite: strict
-        id: "3975497070134517"
+        id: "2062439647687473"
     _type: cookie_jar
