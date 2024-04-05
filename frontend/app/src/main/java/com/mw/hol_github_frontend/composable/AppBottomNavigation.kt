@@ -60,7 +60,7 @@ fun AppBottomNavigation() {
             screen = NavTarget.Game
         ),
         NavigationItem(
-            "Leaderboard",
+            "Top 100",
             icon = Icons.Outlined.Leaderboard,
             iconSelected = Icons.Filled.Leaderboard,
             screen = NavTarget.Leaderboard

@@ -8,6 +8,7 @@ import androidx.datastore.dataStore
 import com.google.protobuf.InvalidProtocolBufferException
 import com.mw.hol_github_frontend.BuildConfig
 import com.mw.hol_github_frontend.api.game.GameApi
+import com.mw.hol_github_frontend.api.leaderboard.LeaderboardApi
 import com.mw.hol_github_frontend.api.user.UserApi
 import com.mw.hol_github_frontend.proto.PersistentCookie
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -46,6 +47,10 @@ class ApiClient(@ApplicationContext context: Context) {
 
     val game: GameApi by lazy {
         client.retrofit.create(GameApi::class.java)
+    }
+
+    val leaderboard: LeaderboardApi by lazy {
+        client.retrofit.create(LeaderboardApi::class.java)
     }
 }
 
