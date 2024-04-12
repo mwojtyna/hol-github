@@ -37,7 +37,7 @@ class SessionFilter(private val service: SessionService) : OncePerRequestFilter(
         }
 
         val session = service.getSession(sessionIdFromCookie)
-        if (session == null || sessionIdFromCookie != session.id) {
+        if (session == null) {
             service.deleteSession(sessionIdFromCookie)
             response.status = HttpServletResponse.SC_UNAUTHORIZED
             return
